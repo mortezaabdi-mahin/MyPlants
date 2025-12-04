@@ -1,47 +1,64 @@
-const CACHE_NAME = 'plant-manager-v1';
+// نام کش (هر وقت فایل‌ها تغییر کرد، این ورژن را بالا ببرید: v4 -> v5)
+const CACHE_NAME = "plant-expert-v4";
+
+// لیست تمام فایل‌هایی که باید کش شوند
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/script.js',
-  '/manifest.json',
-  // اگر آیکون دارید آن‌ها را هم اضافه کنید
-  // '/icon-192.png',
-  // '/icon-512.png'
+  "./",
+  "./index.html",
+  "./styles.css",
+  "./script.js",
+  "./plants.json", // دیتابیس گیاهان
+  "./education.json", // دیتابیس آموزش‌ها
+  "./manifest.json",
+  // اگر آیکون دارید آن‌کامنت کنید:
+  // './icon-192.png',
+  // './icon-512.png'
 ];
 
-// نصب سرویس ورکر و کش کردن فایل‌ها
-self.addEventListener('install', (event) => {
+// ۱. نصب: کش کردن فایل‌ها
+self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('Opened cache');
+      console.log("Service Worker: Caching files...");
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
+  // اجبار به فعال‌سازی فوری سرویس ورکر جدید
+  self.skipWaiting();
 });
 
-// فعال‌سازی و پاک کردن کش‌های قدیمی
-self.addEventListener('activate', (event) => {
+// ۲. فعال‌سازی: پاک کردن کش‌های قدیمی
+self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
+    caches.keys().then((keyList) => {
       return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            console.log('Deleting old cache:', cache);
-            return caches.delete(cache);
+        keyList.map((key) => {
+          if (key !== CACHE_NAME) {
+            console.log("Service Worker: Removing old cache", key);
+            return caches.delete(key);
           }
         })
       );
     })
   );
+  // کنترل تمام کلاینت‌ها (صفحات) توسط این سرویس ورکر
+  return self.clients.claim();
 });
 
-// استراتژی کش: اول کش، اگر نبود شبکه (Cache First)
-self.addEventListener('fetch', (event) => {
+// ۳. فچ: استراتژی Cache First (اول کش، اگر نبود شبکه)
+self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
-      // اگر در کش بود برگردان، اگر نبود درخواست بزن
-      return response || fetch(event.request);
+      // اگر فایل در کش بود، برگردان
+      if (response) {
+        return response;
+      }
+      // اگر نبود، از شبکه بگیر
+      return fetch(event.request).catch(() => {
+        // اگر شبکه هم نبود (آفلاین)، می‌توان صفحه جایگزین نشان داد
+        // فعلاً فقط لاگ می‌زنیم
+        console.log("Offline: File not found in cache");
+      });
     })
   );
 });

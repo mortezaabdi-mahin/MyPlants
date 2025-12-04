@@ -2,74 +2,387 @@
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>دستیار هوشمند گیاهان | Plant Care AI</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>دستیار هوشمند گیاهان | Plant Expert</title>
 
+    <!-- فونت فارسی وزیر -->
     <link
       href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css"
       rel="stylesheet"
       type="text/css"
     />
+    <!-- آیکون‌ها (FontAwesome) -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <!-- فایل استایل -->
     <link rel="stylesheet" href="styles.css" />
-    <!-- سایر تگ‌های متا و لینک‌ها -->
-    
-    <!-- لینک به مانیفست -->
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- تنظیم رنگ تم برای نوار آدرس موبایل -->
-    <meta name="theme-color" content="#2d6a4f">
-    
-    <!-- آیکون برای iOS (اختیاری ولی توصیه می‌شود) -->
-    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <!-- تنظیمات PWA -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#2d6a4f" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
   </head>
   <body>
-    <div class="container">
-      <header>
-        <h1><i class="fas fa-leaf"></i> دانشنامه هوشمند گیاهان</h1>
-        <div class="subtitle">
-          دستیار تخصصی نگهداری، عیب‌یابی و شناخت گیاهان آپارتمانی
-        </div>
-      </header>
+    <div class="main-content">
+      <!-- =========================================
+           تب ۱: دانشنامه و جستجو (Home)
+           ========================================= -->
+      <section id="tab-home" class="tab-section active">
+        <header>
+          <h1><i class="fas fa-leaf"></i> دانشنامه گیاهان</h1>
+          <div class="subtitle">مرجع تخصصی نگهداری و درمان</div>
+        </header>
 
-      <div class="controls-wrapper">
-        <div class="filters">
-          <div>
-            <label for="group-filter"
-              ><i class="fas fa-layer-group"></i> فیلتر بر اساس نیاز آبی:</label
-            >
-            <select id="group-filter" onchange="filterPlants()"></select>
+        <div class="controls-wrapper">
+          <!-- نوار جستجو -->
+          <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="جستجوی نام گیاه (مثلاً: پتوس...)"
+              oninput="filterPlants()"
+            />
+            <button class="clear-btn" onclick="clearSearch()">
+              <i class="fas fa-times"></i>
+            </button>
           </div>
-          <div>
-            <label for="light-filter"
-              ><i class="fas fa-sun"></i> فیلتر بر اساس نور:</label
-            >
-            <select id="light-filter" onchange="filterPlants()"></select>
+
+          <!-- فیلترها -->
+          <div class="filters">
+            <div>
+              <label><i class="fas fa-layer-group"></i> دسته‌بندی:</label>
+              <select id="group-filter" onchange="filterPlants()"></select>
+            </div>
+            <div>
+              <label><i class="fas fa-sun"></i> نور مورد نیاز:</label>
+              <select id="light-filter" onchange="filterPlants()"></select>
+            </div>
+          </div>
+
+          <label
+            style="
+              font-size: 0.9rem;
+              margin-bottom: 5px;
+              display: block;
+              color: var(--text-secondary);
+            "
+          >
+            نتایج یافت شده:
+          </label>
+          <select id="plant-selector" onchange="displayPlantInfo()"></select>
+        </div>
+
+        <div id="results">
+          <div class="empty-state">
+            <i class="fas fa-seedling"></i>
+            <p>نام گیاه را جستجو یا از لیست انتخاب کنید.</p>
           </div>
         </div>
+      </section>
+
+      <!-- =========================================
+           تب ۲: باغچه من (Garden)
+           ========================================= -->
+      <section id="tab-garden" class="tab-section" style="display: none">
+        <header>
+          <h1><i class="fas fa-home"></i> باغچه من</h1>
+          <div class="subtitle">مدیریت آبیاری و یادآوری‌ها</div>
+        </header>
+        <div id="my-garden-list" class="garden-grid">
+          <!-- لیست گیاهان با JS پر می‌شود -->
+        </div>
+        <button class="fab-add" onclick="switchTab('home')">
+          <i class="fas fa-plus"></i> افزودن گیاه جدید
+        </button>
+      </section>
+
+      <!-- =========================================
+           تب ۳: آموزش (Education)
+           ========================================= -->
+      <section id="tab-edu" class="tab-section" style="display: none">
+        <header>
+          <h1><i class="fas fa-graduation-cap"></i> مدرسه گیاهان</h1>
+          <div class="subtitle">مقالات تخصصی نگهداری</div>
+        </header>
+        <div id="edu-content" class="edu-grid">
+          <!-- محتوا با JS از education.json پر می‌شود -->
+        </div>
+      </section>
+
+      <!-- =========================================
+           تب ۴: تنظیمات (Settings)
+           ========================================= -->
+      <section id="tab-settings" class="tab-section" style="display: none">
+        <header>
+          <h1><i class="fas fa-cog"></i> تنظیمات</h1>
+          <div class="subtitle">شخصی‌سازی و پشتیبان‌گیری</div>
+        </header>
+
+        <div class="settings-container">
+          <!-- حالت شب -->
+          <div class="setting-item">
+            <div class="setting-label">
+              <i class="fas fa-moon"></i>
+              <span>حالت شب (Dark Mode)</span>
+            </div>
+            <label class="switch">
+              <input
+                type="checkbox"
+                id="dark-mode-toggle"
+                onchange="toggleDarkMode()"
+              />
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <!-- پشتیبان‌گیری و بازگردانی -->
+          <div
+            class="setting-item"
+            style="flex-direction: column; align-items: stretch; gap: 15px"
+          >
+            <div class="setting-label">
+              <i class="fas fa-database"></i>
+              <span>مدیریت اطلاعات (Backup)</span>
+            </div>
+            <p
+              style="margin: 0; font-size: 0.8rem; color: var(--text-secondary)"
+            >
+              تهیه فایل پشتیبان از باغچه و دفترچه خاطرات.
+            </p>
+            <div style="display: flex; gap: 10px">
+              <button onclick="backupData()" class="btn-backup">
+                <i class="fas fa-download"></i> دانلود بکاپ
+              </button>
+              <button onclick="triggerRestore()" class="btn-restore">
+                <i class="fas fa-upload"></i> بازگردانی
+              </button>
+            </div>
+            <input
+              type="file"
+              id="restore-input"
+              accept=".json"
+              style="display: none"
+              onchange="restoreData(this)"
+            />
+          </div>
+
+          <!-- نسخه برنامه -->
+          <div class="setting-item">
+            <div class="setting-label">
+              <i class="fas fa-info-circle"></i>
+              <span>نسخه برنامه</span>
+            </div>
+            <span style="color: var(--text-muted); font-size: 0.9rem"
+              >2.1.0</span
+            >
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- =========================================
+         نوار ناوبری پایین (Bottom Navigation)
+         ========================================= -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="switchTab('home')">
+        <i class="fas fa-search"></i>
+        <span>دانشنامه</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('garden')">
+        <i class="fas fa-seedling"></i>
+        <span>باغچه</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('edu')">
+        <i class="fas fa-book-open"></i>
+        <span>آموزش</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('settings')">
+        <i class="fas fa-cog"></i>
+        <span>تنظیمات</span>
+      </button>
+    </nav>
+
+    <!-- =========================================
+         مودال‌ها (پنجره‌های پاپ‌آپ)
+         ========================================= -->
+
+    <!-- 1. مودال افزودن به باغچه -->
+    <div id="add-modal" class="modal">
+      <div class="modal-content">
+        <h3>افزودن به باغچه من</h3>
+        <label
+          style="
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+          "
+          >نام انتخابی:</label
+        >
+        <input
+          type="text"
+          id="modal-nickname"
+          placeholder="مثلاً: سانسوریا پذیرایی"
+        />
 
         <label
-          for="plant-selector"
-          style="font-size: 1.1rem; margin-bottom: 10px; display: block"
-          ><i class="fas fa-search"></i> انتخاب گیاه مورد نظر:</label
+          style="
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+          "
+          >دوره‌ی آبیاری (روز):</label
         >
-        <select id="plant-selector" onchange="displayPlantInfo()">
-          <option value="">-- ابتدا فیلتر کنید یا لیست را باز کنید --</option>
-        </select>
-      </div>
+        <input type="number" id="modal-days" value="7" />
 
-      <div id="results">
-        <div class="empty-state">
-          <i class="fas fa-seedling"></i>
-          <p>
-            لطفاً یک گیاه را انتخاب کنید تا اطلاعات تخصصی آن نمایش داده شود.
-          </p>
+        <div class="modal-actions">
+          <button onclick="closeModal()" class="btn-cancel">لغو</button>
+          <button onclick="confirmAddToGarden()" class="btn-confirm">
+            ذخیره
+          </button>
         </div>
       </div>
     </div>
+
+    <!-- 2. مودال دفترچه خاطرات (Plant Diary) -->
+    <div id="diary-modal" class="modal">
+      <div class="modal-content diary-content">
+        <div class="diary-header">
+          <h3 id="diary-title" style="margin: 0; font-size: 1.1rem">
+            تاریخچه گیاه
+          </h3>
+          <button onclick="closeDiary()" class="close-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div id="diary-list" class="diary-list">
+          <!-- لیست لاگ‌ها اینجا ساخته می‌شود -->
+        </div>
+
+        <div class="diary-form">
+          <h4><i class="fas fa-pen"></i> ثبت رویداد جدید</h4>
+          <div class="form-row" style="margin-bottom: 10px">
+            <select id="log-type">
+              <option value="water">💧 آبیاری</option>
+              <option value="fertilizer">🧪 کوددهی</option>
+              <option value="growth">🌱 رشد/برگ جدید</option>
+              <option value="soil">🌍 تعویض خاک</option>
+              <option value="pest">🐛 آفت/بیماری</option>
+              <option value="prune">✂️ هرس کردن</option>
+              <option value="other">📝 یادداشت معمولی</option>
+            </select>
+            <input type="date" id="log-date" />
+          </div>
+          <textarea id="log-note" placeholder="توضیحات..."></textarea>
+          <button onclick="saveLog()" class="btn-confirm" style="width: 100%">
+            ثبت
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. مودال ویکی‌پدیا (Wikipedia API) -->
+    <div id="wiki-modal" class="modal" style="display: none">
+      <div
+        class="modal-content"
+        style="max-width: 500px; max-height: 85vh; overflow-y: auto"
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+          "
+        >
+          <h3 id="wiki-title-modal" style="margin: 0; color: var(--info-blue)">
+            <i class="fab fa-wikipedia-w"></i> دانشنامه آنلاین
+          </h3>
+          <button onclick="closeWikiModal()" class="close-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <!-- لودینگ -->
+        <div id="wiki-loading" style="text-align: center; padding: 20px">
+          <i
+            class="fas fa-spinner fa-spin"
+            style="font-size: 2rem; color: var(--primary-green)"
+          ></i>
+          <p>در حال اتصال به ویکی‌پدیا...</p>
+        </div>
+
+        <!-- نتیجه -->
+        <div id="wiki-result" style="display: none">
+          <img
+            id="wiki-image"
+            src=""
+            alt=""
+            style="
+              width: 100%;
+              border-radius: 10px;
+              margin-bottom: 15px;
+              display: none;
+            "
+          />
+          <p
+            id="wiki-extract"
+            style="
+              line-height: 1.8;
+              color: var(--text-main);
+              text-align: justify;
+            "
+          ></p>
+          <a
+            id="wiki-link"
+            href="#"
+            target="_blank"
+            class="btn-confirm"
+            style="
+              display: block;
+              text-align: center;
+              text-decoration: none;
+              margin-top: 15px;
+              background: var(--info-blue);
+            "
+          >
+            مطالعه مقاله کامل
+          </a>
+        </div>
+
+        <!-- خطا -->
+        <div
+          id="wiki-error"
+          style="
+            display: none;
+            text-align: center;
+            color: var(--warning-red);
+            padding: 20px;
+          "
+        >
+          <i
+            class="fas fa-wifi"
+            style="font-size: 2rem; margin-bottom: 10px"
+          ></i>
+          <p>اتصال برقرار نشد یا مقاله‌ای یافت نشد.</p>
+          <button
+            onclick="closeWikiModal()"
+            class="btn-cancel"
+            style="margin-top: 10px"
+          >
+            بستن
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- فایل اسکریپت -->
     <script src="script.js"></script>
   </body>
 </html>
