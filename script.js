@@ -631,22 +631,34 @@ function deleteLog(logId) {
    ۸. بخش آموزش (Education)
    ========================================= */
 function renderEducation() {
-  const container = document.getElementById("edu-content");
-  if (container.innerHTML !== "" || educationData.length === 0) return;
+    const container = document.getElementById('edu-content');
+    
+    // اگر دیتا هنوز لود نشده، چیزی نشان نده (یا لودینگ نشان بده)
+    if (educationData.length === 0) {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>در حال بارگذاری آموزش‌ها...</p></div>';
+        // تلاش مجدد برای لود دیتا اگر خالی بود
+        loadEducationData();
+        return;
+    }
 
-  educationData.forEach((item, index) => {
-    let icon = "fa-book";
-    if (item.category === "تغذیه" || item.category === "تقویتی")
-      icon = "fa-flask";
-    if (item.category === "آفات") icon = "fa-bug";
-    if (item.category === "آبیاری") icon = "fa-tint";
-    if (item.category === "خاک") icon = "fa-layer-group";
-    if (item.category === "نور") icon = "fa-sun";
-    if (item.category === "تکثیر") icon = "fa-cut";
+    // اگر قبلاً پر شده بود، دوباره نساز (جلوگیری از تکرار)
+    // اما چک می‌کنیم که محتوای لودینگ نباشد
+    if (container.innerHTML.includes('edu-card')) return;
 
-    const div = document.createElement("div");
-    div.className = "edu-card";
-    div.innerHTML = `
+    container.innerHTML = ''; // پاک کردن لودینگ یا محتوای قبلی
+
+    educationData.forEach((item, index) => {
+        let icon = "fa-book";
+        if(item.category === "تغذیه" || item.category === "تقویتی") icon = "fa-flask";
+        if(item.category === "آفات") icon = "fa-bug";
+        if(item.category === "آبیاری") icon = "fa-tint";
+        if(item.category === "خاک") icon = "fa-layer-group";
+        if(item.category === "نور") icon = "fa-sun";
+        if(item.category === "تکثیر") icon = "fa-cut";
+
+        const div = document.createElement('div');
+        div.className = 'edu-card';
+        div.innerHTML = `
             <div class="edu-header" onclick="toggleEdu(${index})">
                 <div style="display:flex; align-items:center; gap:10px;">
                     <i class="fas ${icon}" style="color:rgba(255,255,255,0.8)"></i>
@@ -659,17 +671,8 @@ function renderEducation() {
                 <div class="edu-text">${item.content}</div>
             </div>
         `;
-    container.appendChild(div);
-  });
-}
-
-function toggleEdu(index) {
-  const body = document.getElementById(`edu-${index}`);
-  const isOpen = body.classList.contains("open");
-  document
-    .querySelectorAll(".edu-body")
-    .forEach((el) => el.classList.remove("open"));
-  if (!isOpen) body.classList.add("open");
+        container.appendChild(div);
+    });
 }
 
 /* =========================================
@@ -760,7 +763,29 @@ function restoreData(inputElement) {
   reader.readAsText(file);
   inputElement.value = "";
 }
+/* =========================================
+   تابع باز و بسته کردن آکاردئون آموزش
+   (این تابع احتمالا پاک شده بود)
+   ========================================= */
+function toggleEdu(index) {
+    // ۱. پیدا کردن محتوای مربوط به کلیک
+    const content = document.getElementById(`edu-${index}`);
+    
+    // ۲. بررسی اینکه آیا الان باز است یا بسته؟
+    const isAlreadyOpen = content.classList.contains('open');
 
+    // ۳. بستن تمام کشوهای دیگر (برای اینکه فقط یکی باز باشد)
+    const allContents = document.querySelectorAll('.edu-body');
+    allContents.forEach(el => {
+        el.classList.remove('open');
+        // اگر می‌خواهید انیمیشن نرم‌تر باشد، استایل display را هم مدیریت کنید (توسط CSS انجام شده ولی اینجا محض اطمینان)
+    });
+
+    // ۴. اگر کشوی کلیک شده بسته بود، حالا بازش کن
+    if (!isAlreadyOpen) {
+        content.classList.add('open');
+    }
+}
 /* =========================================
    ۱۰. راه‌اندازی اولیه
    ========================================= */
