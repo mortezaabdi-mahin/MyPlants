@@ -898,3 +898,93 @@ body.dark-mode .btn-wiki {
 body.dark-mode .btn-wiki:hover {
   background: #444;
 }
+/* =========================================
+   ۱۳. استایل کارت توسعه‌دهنده (Developer Card)
+   ========================================= */
+
+/* تغییر چیدمان آیتم تنظیمات برای این کارت خاص */
+.setting-item.developer-card {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center;
+    padding: 30px 20px !important;
+    background: var(--bg-card);
+    margin-top: 10px;
+    border: 1px solid var(--border-color);
+}
+
+/* آواتار یا آیکون پروفایل */
+.dev-avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    box-shadow: 0 5px 15px rgba(45, 106, 79, 0.3);
+    border: 3px solid var(--bg-body);
+}
+
+/* نام و عنوان */
+.dev-name {
+    margin: 0 0 5px 0;
+    color: var(--primary-green);
+    font-size: 1.2rem;
+}
+
+.dev-title {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+    display: block;
+}
+
+/* دکمه ایمیل */
+.dev-email {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    background-color: var(--bg-section);
+    color: var(--text-main);
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.dev-email:hover {
+    background-color: var(--primary-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* اطلاعات نسخه */
+.app-version-info {
+    border-top: 1px solid var(--border-color);
+    width: 100%;
+    padding-top: 15px;
+    margin-top: 5px;
+}
+
+.version-tag {
+    background: var(--accent-lime);
+    color: var(--primary-green);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.app-version-info p {
+    margin: 10px 0 0 0;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
