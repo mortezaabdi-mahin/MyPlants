@@ -2,8 +2,21 @@
   "name": "مدیریت گل‌ها (آفلاین)",
   "short_name": "گل‌ها",
   "description": "دانشنامه و ابزار عیب‌یابی گیاهان آپارتمانی",
-  "start_url": "garden_manager.html",
+  "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#eaf6e9", 
-  "theme_color": "#006400"
+  "background_color": "#eaf6e9",
+  "theme_color": "#2d6a4f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
