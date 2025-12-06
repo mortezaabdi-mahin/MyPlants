@@ -1,5 +1,329 @@
 /* =========================================
-   ۱. مت/*/*/*/* =========================================
+   ۱. مت/*/*/*/*/* =========================================
+   ۱. متغیرها و پالت رنگی (Modern Clean & Readable)
+   ========================================= */
+:root {
+    /* --- تم روشن (اصلاح شده برای خوانایی) --- */
+    --bg-body: #f3f5f4;          /* خاکستری خیلی محو مایل به سبز (برای جداسازی از کارت‌ها) */
+    --bg-card: #ffffff;          /* سفید خالص برای کارت‌ها */
+    --bg-input: #f9fafb;         /* پس زمینه ورودی‌ها */
+    
+    --text-main: #111827;        /* مشکی نرم (برای خوانایی عالی) */
+    --text-secondary: #4b5563;   /* خاکستری تیره */
+    --text-muted: #9ca3af;       /* خاکستری روشن */
+    
+    --primary: #059669;          /* سبز اصلی (لوگو و دکمه‌ها) */
+    --primary-light: #d1fae5;    /* سبز خیلی روشن (پس‌زمینه دکمه‌های فرعی) */
+    
+    --border-color: #e5e7eb;     /* رنگ خطوط جداکننده */
+    --shadow-card: 0 4px 20px -5px rgba(0, 0, 0, 0.08); /* سایه نرم برای کارت‌ها */
+    
+    --warning: #ef4444;
+    --info: #3b82f6;
+    
+    --radius: 18px;              /* گردی گوشه‌ها */
+    --nav-height: 70px;
+}
+
+/* --- تم تاریک (Dark Mode) --- */
+body.dark-mode {
+    --bg-body: #111827;
+    --bg-card: #1f2937;
+    --bg-input: #374151;
+
+    --text-main: #f9fafb;
+    --text-secondary: #d1d5db;
+    --text-muted: #9ca3af;
+
+    --primary: #34d399;
+    --primary-light: rgba(52, 211, 153, 0.15);
+    
+    --border-color: #374151;
+    --shadow-card: 0 4px 20px -5px rgba(0, 0, 0, 0.5);
+}
+
+/* =========================================
+   ۲. تنظیمات اصلی صفحه
+   ========================================= */
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+
+body {
+    font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    margin: 0;
+    /* اصلاح مشکل اسکرول: فضای زیاد پایین صفحه */
+    padding: 0 0 130px 0; 
+    line-height: 1.6;
+    font-size: 15px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.main-content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+/* هدر */
+header {
+    text-align: center;
+    margin: 10px 0 20px 0;
+}
+h1 {
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin-bottom: 5px;
+    color: var(--text-main);
+}
+.subtitle {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    padding: 4px 12px;
+    border-radius: 50px;
+    border: 1px solid var(--border-color);
+    display: inline-block;
+}
+
+/* =========================================
+   ۳. کارت‌ها (خوانا و تمیز)
+   ========================================= */
+.controls-wrapper, .plant-card, .garden-card, .edu-card, .settings-container, .quiz-wrapper {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 18px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color); /* حاشیه ظریف برای جداسازی */
+}
+
+/* =========================================
+   ۴. ورودی‌ها و دکمه‌ها
+   ========================================= */
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color); /* کادر مشخص */
+    border-radius: 12px;
+    background: var(--bg-input);
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    transition: 0.2s;
+}
+
+/* وقتی روی اینپوت کلیک میشه */
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+    background: var(--bg-card);
+}
+
+button { cursor: pointer; font-family: inherit; font-weight: 700; }
+
+/* =========================================
+   ۵. جستجو و فیلترها
+   ========================================= */
+.search-box { position: relative; margin-bottom: 12px; }
+.search-box input { padding-left: 40px; padding-right: 40px; border-radius: 50px; }
+.search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
+.clear-btn { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); font-size: 1.2rem; }
+
+.filters { display: flex; gap: 10px; margin-bottom: 10px; }
+.filters > div { flex: 1; }
+.filters label { display: block; font-size: 0.75rem; margin-bottom: 4px; color: var(--text-secondary); }
+.filters select { padding: 8px; font-size: 0.85rem; }
+
+/* دراپ‌داون انتخاب گیاه */
+#plant-selector { font-weight: bold; border-color: var(--primary); }
+
+/* =========================================
+   ۶. کارت گیاه (Plant Info)
+   ========================================= */
+.plant-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px; margin-bottom: 12px;
+}
+.plant-header h2 { font-size: 1.1rem; margin: 0; }
+.badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 50px; font-size: 0.7rem; }
+
+.info-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.info-box {
+    background: var(--bg-input);
+    padding: 10px; border-radius: 12px;
+    display: flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border-color);
+}
+.info-icon {
+    width: 32px; height: 32px; font-size: 1rem;
+    background: white; border-radius: 8px;
+    display: flex; justify-content: center; align-items: center;
+    color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+body.dark-mode .info-icon { background: #374151; }
+
+.info-content strong { display: block; font-size: 0.7rem; color: var(--text-secondary); }
+.info-content span { font-size: 0.85rem; font-weight: 600; }
+
+/* دکمه افزودن */
+.btn-add-garden, .fab-add {
+    background: var(--primary); color: white; border: none;
+    width: 100%; padding: 14px; border-radius: 14px;
+    font-size: 0.95rem; margin-top: 15px;
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.btn-wiki {
+    background: transparent; border: 1px solid var(--info); color: var(--info);
+    width: 100%; padding: 12px; border-radius: 14px; margin-top: 8px;
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+}
+
+/* =========================================
+   ۷. باغچه من
+   ========================================= */
+.garden-card {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 15px; border-left: 4px solid var(--primary);
+}
+.garden-card.urgent { border-left-color: var(--warning); background: #fff5f5; }
+body.dark-mode .garden-card.urgent { background: #451a1a; }
+
+.garden-info h3 { margin: 0 0 4px 0; font-size: 1rem; }
+.garden-info p { margin: 0; font-size: 0.8rem; color: var(--text-secondary); }
+
+.garden-actions { display: flex; gap: 6px; }
+.btn-water { background: var(--info); color: white; border: none; padding: 6px 10px; border-radius: 8px; font-size: 0.8rem; }
+.btn-delete { background: var(--bg-input); border: 1px solid var(--warning); color: var(--warning); padding: 6px; border-radius: 8px; }
+
+/* عیب‌یابی */
+.trouble-box {
+    background: #fef2f2; border: 1px solid #fecaca;
+    padding: 12px; border-radius: 12px; margin-bottom: 8px;
+}
+body.dark-mode .trouble-box { background: #451a1a; border-color: #7f1d1d; }
+
+.trouble-title { color: var(--warning); font-weight: bold; font-size: 0.9rem; margin-bottom: 4px; }
+.trouble-solution { font-size: 0.8rem; background: white; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; color: #111; }
+
+/* =========================================
+   ۸. آموزش (اصلاح شده برای دید بهتر)
+   ========================================= */
+.edu-card { padding: 0; overflow: hidden; border: 1px solid var(--border-color); }
+
+.edu-header {
+    background: var(--bg-input); /* پس زمینه مشخص */
+    padding: 15px;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-main); /* رنگ متن تیره */
+    transition: 0.2s;
+}
+.edu-header:hover { background: var(--border-color); }
+.edu-header i { color: var(--primary); }
+
+.edu-body {
+    padding: 15px; border-top: 1px solid var(--border-color);
+    background: var(--bg-card); line-height: 1.8; font-size: 0.9rem;
+    display: none; color: var(--text-secondary);
+}
+.edu-body.open { display: block; animation: slideDown 0.3s; }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+.tag { background: var(--primary-light); color: var(--primary); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 800; display: inline-block; margin-bottom: 10px; }
+
+/* =========================================
+   ۹. تنظیمات
+   ========================================= */
+.setting-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 0; border-bottom: 1px solid var(--border-color);
+}
+.setting-item:last-child { border-bottom: none; }
+.setting-label { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+.setting-label i { color: var(--primary); font-size: 1.2rem; background: var(--primary-light); padding: 6px; border-radius: 8px; }
+
+/* سوییچ */
+.switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--primary); }
+input:checked + .slider:before { transform: translateX(20px); }
+
+/* توسعه دهنده */
+.developer-card { text-align: center; background: var(--bg-input); border-radius: 12px; margin-top: 10px; padding: 20px; }
+.dev-avatar { width: 70px; height: 70px; background: white; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 10px auto; border: 2px solid var(--border-color); }
+
+/* =========================================
+   ۱۰. نوار ناوبری پایین (رفع باگ همپوشانی)
+   ========================================= */
+.bottom-nav {
+    position: fixed;
+    bottom: 20px; 
+    left: 20px; 
+    right: 20px;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.95); /* تقریبا مات */
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.05);
+    display: flex; justify-content: space-around; align-items: center;
+    max-width: 500px; margin: 0 auto;
+    z-index: 1000;
+}
+body.dark-mode .bottom-nav { background: rgba(31, 41, 55, 0.95); border-color: rgba(255,255,255,0.1); }
+
+.nav-item {
+    background: none; border: none; color: var(--text-muted);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 60px; height: 100%; gap: 4px;
+}
+.nav-item i { font-size: 1.4rem; transition: 0.2s; }
+.nav-item span { font-size: 0.65rem; font-weight: 600; }
+
+.nav-item.active { color: var(--primary); }
+.nav-item.active i { transform: translateY(-4px); }
+
+/* =========================================
+   ۱۱. مودال‌ها
+   ========================================= */
+.modal {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 9999;
+    justify-content: center; align-items: center;
+    backdrop-filter: blur(3px);
+}
+.modal-content {
+    background: var(--bg-card); width: 85%; max-width: 350px;
+    padding: 25px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    max-height: 80vh; overflow-y: auto;
+}
+.modal h3 { margin-top: 0; text-align: center; }
+
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.btn-confirm { flex: 1; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; }
+.btn-cancel { flex: 1; background: var(--bg-input); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; }
+
+/* لاگ‌ها */
+.log-item { display: flex; gap: 10px; margin-bottom: 12px; }
+.log-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; font-size: 0.9rem; }
+.log-content { background: var(--bg-input); padding: 10px; border-radius: 12px; flex: 1; border: 1px solid var(--border-color); }
+.type-water { background: #3b82f6; }
+.type-fertilizer { background: #ec4899; }
+.type-growth { background: #10b981; } =========================================
    ۱. متغیرها و پالت رنگی (Modern Organic)
    ========================================= */
 :root {
