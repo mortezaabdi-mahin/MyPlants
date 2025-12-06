@@ -1,37 +1,59 @@
-// ایمپورت کردن تمام سرویس‌ها و کامپوننت‌ها
+// js/main.js
+
+// 1. ایمپورت کردن تمام سرویس‌ها و کامپوننت‌ها
 import * as Encyclo from './services/Encyclopedia.js';
 import * as Garden from './services/GardenManager.js';
 import * as Wiki from './services/WikiService.js';
 import * as Settings from './services/SettingsManager.js';
 import * as Quiz from './services/QuizManager.js';
 import { fetchJson } from './utils.js';
-import { EduItem } from './components/EduItem.js';
+import { EduItem } from './components/EduItem.js'; // <--- حیاتی برای نمایش آموزش
 
 /* =========================================
-   ۱. مدیریت بخش آموزش (Education)
+   ۱. مدیریت بخش آموزش (Education) - اصلاح شده
    ========================================= */
 let eduData = [];
 
 async function loadEdu() {
-    // دریافت اطلاعات از فایل JSON
-    eduData = await fetchJson('education.json') || [];
+    try {
+        const data = await fetchJson('education.json');
+        if (data && data.length > 0) {
+            eduData = data;
+            console.log("✅ آموزش‌ها لود شد:", eduData.length, "آیتم");
+            
+            // اگر کاربر همین الان در تب آموزش است، رفرش کن
+            const eduTab = document.getElementById('tab-edu');
+            if (eduTab && eduTab.style.display !== 'none') {
+                renderEdu();
+            }
+        } else {
+            console.warn("⚠️ فایل education.json خالی است یا یافت نشد.");
+        }
+    } catch (e) {
+        console.error("❌ خطا در لود آموزش:", e);
+    }
 }
 
 function renderEdu() {
     const container = document.getElementById('edu-content');
     
-    // اگر قبلاً رندر شده یا دیتا خالی است، کاری نکن
-    if (container.innerHTML !== "" || eduData.length === 0) return;
+    // اگر دیتا هنوز لود نشده
+    if (!eduData || eduData.length === 0) {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>در حال بارگذاری مطالب...</p></div>';
+        return;
+    }
 
-    // استفاده از کامپوننت EduItem
+    // رندر کردن آیتم‌ها با استفاده از کامپوننت EduItem
     container.innerHTML = eduData.map((item, index) => EduItem(item, index)).join('');
 }
 
 function toggleEdu(index) {
     const body = document.getElementById(`edu-${index}`);
+    if (!body) return;
+    
     const isOpen = body.classList.contains('open');
     
-    // بستن همه آکاردئون‌ها
+    // بستن همه آکاردئون‌ها (برای اینکه فقط یکی باز باشد)
     document.querySelectorAll('.edu-body').forEach(el => el.classList.remove('open'));
     
     // اگر بسته بود، بازش کن
@@ -44,8 +66,10 @@ function toggleEdu(index) {
 function switchTab(tabName) {
     // مخفی کردن همه سکشن‌ها
     document.querySelectorAll('.tab-section').forEach(el => el.style.display = 'none');
+    
     // نمایش سکشن انتخاب شده
-    document.getElementById(`tab-${tabName}`).style.display = 'block';
+    const targetTab = document.getElementById(`tab-${tabName}`);
+    if (targetTab) targetTab.style.display = 'block';
     
     // مدیریت کلاس active در نویگیشن پایین
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -58,18 +82,18 @@ function switchTab(tabName) {
 
     // لود کردن محتوای اختصاصی هر تب هنگام ورود
     if (tabName === 'garden') Garden.render();
-    if (tabName === 'edu') renderEdu();
+    if (tabName === 'edu') renderEdu();     // <--- فراخوانی رندر آموزش
     if (tabName === 'quiz') Quiz.renderQuizTab();
 }
 
 // تابع عمومی بستن مودال‌ها
 function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
+    const modal = document.getElementById(modalId);
+    if (modal) modal.style.display = 'none';
 }
 
 /* =========================================
    ۳. اتصال به HTML (Window Binding)
-   چون ماژول‌ها ایزوله هستند، توابع باید به window وصل شوند
    ========================================= */
 window.app = {
     // --- دانشنامه ---
@@ -109,17 +133,18 @@ window.app = {
    ۴. نقطه شروع برنامه (Startup)
    ========================================= */
 window.onload = async () => {
+    console.log("🚀 App Initializing...");
+    
     // ۱. اعمال تم ذخیره شده
     Settings.initTheme();
     
-    // ۲. بارگذاری تمام دیتابیس‌ها به صورت موازی
-    await Promise.all([
-        Encyclo.loadData(),
-        loadEdu(),
-        Quiz.loadQuizData()
-    ]);
+    // ۲. بارگذاری تمام دیتابیس‌ها
+    // به ترتیب اجرا می‌شوند تا تداخل ایجاد نشود
+    await Encyclo.loadData();
+    await loadEdu();
+    await Quiz.loadQuizData();
     
-    console.log("✅ Application Started Successfully");
+    console.log("✅ App Ready");
 };
 
 // ثبت سرویس ورکر برای حالت آفلاین
