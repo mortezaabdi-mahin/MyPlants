@@ -8,11 +8,11 @@ export const QuizComponent = {
             
             <div class="stat-box">
                 <span>🏆 بهترین رکورد شما:</span>
-                <strong>${highScore} / 100</strong>
+                <strong style="display:block; font-size:1.5rem; margin-top:5px; color:var(--primary-green)">${highScore} / 100</strong>
             </div>
 
             <button class="btn-confirm big-btn" onclick="app.startQuiz()">
-                <i class="fas fa-play"></i> شروع آزمون
+                <i class="fas fa-play" style="margin-left:10px;"></i> شروع آزمون
             </button>
         </div>
     `,
@@ -47,7 +47,7 @@ export const QuizComponent = {
         `;
     },
 
-    // صفحه نتیجه
+    // صفحه نتیجه (دکمه‌های اصلاح شده)
     resultScreen: (score, correctCount, total, isNewRecord) => {
         let message = "";
         let color = "";
@@ -61,14 +61,21 @@ export const QuizComponent = {
                 <div class="result-circle" style="border-color:${color}; color:${color}">
                     ${score}
                 </div>
-                <h3>${message}</h3>
-                <p>تعداد پاسخ صحیح: ${correctCount} از ${total}</p>
+                <h3 style="margin:10px 0;">${message}</h3>
+                <p style="color:var(--text-secondary); margin-bottom:5px;">تعداد پاسخ صحیح: <strong>${correctCount}</strong> از <strong>${total}</strong></p>
                 
-                ${isNewRecord ? '<div class="new-record">🎉 رکورد جدید! 🎉</div>' : ''}
+                ${isNewRecord ? '<div class="new-record">🏆 رکورد جدید ثبت شد! 🏆</div>' : ''}
 
                 <div class="quiz-actions">
-                    <button class="btn-cancel" onclick="app.switchTab('home')">خروج</button>
-                    <button class="btn-confirm" onclick="app.startQuiz()">آزمون مجدد</button>
+                    <!-- دکمه خروج با آیکون -->
+                    <button class="btn-cancel" onclick="app.switchTab('home')">
+                        <i class="fas fa-home"></i> خروج
+                    </button>
+                    
+                    <!-- دکمه آزمون مجدد با آیکون -->
+                    <button class="btn-confirm" onclick="app.startQuiz()">
+                        <i class="fas fa-redo-alt"></i> آزمون مجدد
+                    </button>
                 </div>
             </div>
         `;
