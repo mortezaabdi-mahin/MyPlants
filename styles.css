@@ -1,5 +1,403 @@
 /* =========================================
-   ۱. مت/*/*/* =========================================
+   ۱. مت/*/*/*/* =========================================
+   ۱. متغیرها و پالت رنگی (Modern Organic)
+   ========================================= */
+:root {
+    /* --- تم روشن (روز) --- */
+    --bg-main: #f0f4f1;          /* خاکستری مایل به سبز خیلی روشن */
+    --bg-card: #ffffff;
+    --bg-input: #f8faf9;
+    
+    --text-primary: #1b4332;     /* سبز بسیار تیره (جایگزین مشکی) */
+    --text-secondary: #52796f;   /* سبز دودی */
+    --text-muted: #95a5a6;
+
+    --primary-color: #2d6a4f;    /* سبز جنگلی */
+    --primary-light: #d8f3dc;    /* سبز نعنایی روشن (برای پس زمینه دکمه‌ها) */
+    --accent-color: #40916c;     /* سبز روشن‌تر */
+    
+    --warning: #e76f51;          /* آجری (برای حذف/خطر) */
+    --info: #457b9d;             /* آبی دودی */
+    --success: #2a9d8f;          /* سبز آبی */
+
+    --border-color: #e8eceb;
+    --shadow-soft: 0 8px 24px rgba(45, 106, 79, 0.08);
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04);
+    
+    --radius-lg: 20px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    
+    --nav-height: 70px;
+}
+
+/* --- تم تاریک (شب) --- */
+body.dark-mode {
+    --bg-main: #121212;
+    --bg-card: #1e1e1e;
+    --bg-input: #2c2c2c;
+
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0bacc;
+    --text-muted: #6c757d;
+
+    --primary-color: #52b788;    /* سبز نئونی مات */
+    --primary-light: rgba(82, 183, 136, 0.15);
+    --accent-color: #74c69d;
+    
+    --warning: #e63946;
+    --info: #6ab0de;
+    
+    --border-color: #333333;
+    --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.3);
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* =========================================
+   ۲. تنظیمات پایه
+   ========================================= */
+* {
+    box-sizing: border-box;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Vazirmatn', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0 0 calc(var(--nav-height) + 20px) 0;
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 15px;
+}
+
+.main-content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+/* هدر */
+header {
+    text-align: center;
+    margin: 15px 0 25px 0;
+}
+h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin: 0;
+}
+.subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    background: var(--primary-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+/* انیمیشن تب‌ها */
+.tab-section {
+    animation: fadeIn 0.4s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   ۳. کارت‌ها (Card Style)
+   ========================================= */
+.controls-wrapper, .plant-card, .garden-card, .edu-card, .settings-container, .quiz-wrapper {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* تعامل با کارت */
+.plant-card:hover, .garden-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+    border-color: var(--primary-color);
+}
+
+/* =========================================
+   ۴. فرم‌ها و دکمه‌ها
+   ========================================= */
+input, select, textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    transition: 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary-color);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+button {
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    border: none;
+    transition: 0.2s;
+}
+button:active { transform: scale(0.96); }
+
+/* =========================================
+   ۵. جستجو و فیلترها
+   ========================================= */
+.search-box { position: relative; margin-bottom: 15px; }
+.search-box input { padding-left: 40px; padding-right: 40px; border-radius: 50px; }
+.search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+.clear-btn { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; color: var(--text-muted); font-size: 1.2rem; }
+
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.filters > div { flex: 1; }
+.filters label { display: block; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 4px; margin-right: 5px; }
+.filters select { padding: 8px; font-size: 0.85rem; }
+
+/* =========================================
+   ۶. کامپوننت‌های گیاه (Plant Details)
+   ========================================= */
+.plant-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px; margin-bottom: 15px;
+}
+.plant-header h2 { margin: 0; font-size: 1.2rem; color: var(--text-primary); }
+.badge {
+    background: var(--primary-color); color: #fff;
+    padding: 4px 10px; border-radius: 50px;
+    font-size: 0.75rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.info-box {
+    background: var(--bg-input);
+    padding: 10px;
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; gap: 10px;
+}
+
+.info-icon {
+    width: 35px; height: 35px;
+    background: var(--bg-card);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--primary-color);
+    font-size: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    flex-shrink: 0;
+}
+
+.info-content strong { display: block; font-size: 0.7rem; color: var(--text-secondary); }
+.info-content span { font-size: 0.85rem; font-weight: 600; }
+
+/* دکمه‌های عملیاتی */
+.btn-add-garden, .fab-add {
+    background: var(--primary-color);
+    color: white;
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    margin-top: 15px;
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+    box-shadow: 0 4px 12px rgba(45, 106, 79, 0.2);
+}
+
+.btn-wiki {
+    background: transparent;
+    border: 1px solid var(--info);
+    color: var(--info);
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    margin-top: 10px;
+    display: flex; justify-content: center; align-items: center; gap: 8px;
+}
+.btn-wiki:hover { background: var(--info); color: white; }
+
+/* =========================================
+   ۷. لیست باغچه من
+   ========================================= */
+.garden-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-left: 5px solid var(--primary-color); /* نشانگر سبز */
+}
+.garden-card.urgent { border-left-color: var(--warning); } /* نشانگر قرمز برای تشنه‌ها */
+
+.garden-info h3 { margin: 0 0 5px 0; font-size: 1rem; }
+.garden-info p { margin: 0; font-size: 0.8rem; color: var(--text-secondary); }
+.garden-info div { font-size: 0.8rem !important; margin-top: 5px !important; }
+
+.garden-actions { display: flex; gap: 8px; }
+.garden-actions button {
+    padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.8rem; color: white;
+}
+.btn-water { background: var(--info); }
+.btn-delete { background: var(--bg-input); color: var(--warning); border: 1px solid var(--warning); }
+
+/* عیب‌یابی */
+.trouble-box {
+    background: rgba(231, 111, 81, 0.08);
+    border: 1px solid rgba(231, 111, 81, 0.2);
+    padding: 15px; border-radius: var(--radius-md);
+    margin-bottom: 10px;
+}
+.trouble-title { color: var(--warning); font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; }
+.trouble-solution { font-size: 0.8rem; background: var(--bg-card); padding: 4px 10px; border-radius: 50px; display: inline-block; margin-top: 5px; }
+
+/* =========================================
+   ۸. بخش آموزش (آکاردئون)
+   ========================================= */
+.edu-header {
+    background: var(--bg-input);
+    padding: 15px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-bottom: 5px;
+}
+.edu-header:hover { background: var(--primary-light); color: var(--primary-color); }
+
+.edu-body {
+    padding: 15px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-bottom: 10px;
+    display: none;
+    line-height: 1.8;
+    color: var(--text-secondary);
+}
+.edu-body.open { display: block; }
+.tag { background: var(--primary-light); color: var(--primary-color); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
+
+/* =========================================
+   ۹. تنظیمات
+   ========================================= */
+.setting-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+.setting-item:last-child { border-bottom: none; }
+.setting-label { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+.setting-label i { color: var(--primary-color); font-size: 1.2rem; }
+
+/* سوییچ */
+.switch { position: relative; display: inline-block; width: 46px; height: 26px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--primary-color); }
+input:checked + .slider:before { transform: translateX(20px); }
+
+/* توسعه دهنده */
+.developer-card { text-align: center; background: linear-gradient(135deg, var(--bg-card), var(--bg-input)); }
+.dev-avatar { width: 80px; height: 80px; background: var(--primary-light); color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 15px auto; }
+
+/* =========================================
+   ۱۰. نوار ناوبری پایین (Clean Dock)
+   ========================================= */
+.bottom-nav {
+    position: fixed;
+    bottom: 20px; left: 20px; right: 20px;
+    height: 65px;
+    background: var(--bg-card);
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    max-width: 500px;
+    margin: 0 auto;
+    z-index: 1000;
+    border: 1px solid var(--border-color);
+}
+
+.nav-item {
+    background: none; border: none; color: var(--text-muted);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 60px; height: 100%; gap: 4px;
+}
+.nav-item i { font-size: 1.4rem; transition: 0.2s; }
+.nav-item span { font-size: 0.65rem; font-weight: 600; }
+
+.nav-item.active { color: var(--primary-color); }
+.nav-item.active i { transform: translateY(-3px); }
+
+/* =========================================
+   ۱۱. مودال‌ها
+   ========================================= */
+.modal {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 9999;
+    justify-content: center; align-items: center;
+    backdrop-filter: blur(5px);
+}
+.modal-content {
+    background: var(--bg-card);
+    width: 90%; max-width: 350px;
+    padding: 25px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    animation: scaleUp 0.3s;
+}
+@keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.btn-confirm { flex: 1; background: var(--primary-color); color: white; padding: 12px; border-radius: var(--radius-md); }
+.btn-cancel { flex: 1; background: var(--bg-input); color: var(--text-secondary); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+
+/* آزمون */
+.quiz-option {
+    background: var(--bg-input); border: 2px solid var(--border-color);
+    padding: 15px; border-radius: var(--radius-md);
+    margin-bottom: 10px; cursor: pointer; text-align: right;
+    font-weight: 600; color: var(--text-primary);
+}
+.quiz-option:hover { border-color: var(--primary-color); background: var(--bg-card); }
+.quiz-option.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+.quiz-option.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+.result-circle {
+    width: 120px; height: 120px; border: 8px solid; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem; margin: 0 auto 20px auto; font-weight: 800;
+} =========================================
    ۱. متغیرها و پالت رنگی (Real Liquid Glass)
    ========================================= */
 :root {
