@@ -2,7 +2,7 @@
    نام کش را تغییر دادم (v6) تا مرورگر مجبور شود 
    فایل‌های جدید (ساختار ماژولار) را دریافت کند.
 */
-const CACHE_NAME = 'plant-expert-v6';
+const CACHE_NAME = 'plant-expert-v7';
 
 // لیست تمام فایل‌های پروژه که باید کش شوند
 const ASSETS_TO_CACHE = [
