@@ -1,5 +1,464 @@
 /* =========================================
-   ۱. متغیرها و پال/* =========================================
+   ۱. متغیرها و پال/*/* =========================================
+   ۱. متغیرها و پالت رنگی (Apple Glass Advanced)
+   ========================================= */
+:root {
+    /* --- تم روشن (Light Mode) --- */
+    --bg-body: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); /* گرادینت خیلی ملایم و تمیز */
+    --bg-card: rgba(255, 255, 255, 0.70); /* شیشه شفاف‌تر */
+    --bg-glass-strong: rgba(255, 255, 255, 0.85);
+    --bg-input: rgba(255, 255, 255, 0.6);
+    
+    --text-main: #1c1c1e; /* مشکی ذغالی اپل */
+    --text-secondary: #6e6e73;
+    --text-muted: #aeaeb2;
+    
+    --border-glass: rgba(255, 255, 255, 0.6);
+    --border-nav: rgba(255, 255, 255, 0.4);
+    
+    --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.06);
+    --shadow-hover: 0 16px 40px rgba(0, 0, 0, 0.12);
+    --shadow-nav: 0 10px 40px rgba(0, 0, 0, 0.1);
+
+    /* --- رنگ‌های برند --- */
+    --primary-green: #34c759;
+    --secondary-green: #32d74b;
+    --gradient-green: linear-gradient(135deg, #34c759, #30d158);
+    
+    --warning-red: #ff3b30;
+    --info-blue: #007aff;
+    --gold: #ffcc00;
+    
+    /* --- تنظیمات رنگ تگ آموزش (مخصوص لایت مود) --- */
+    --tag-bg: rgba(52, 199, 89, 0.15);
+    --tag-text: #145826; /* سبز تیره برای خوانایی روی روشن */
+
+    --nav-height: 85px;
+    --radius: 24px;
+}
+
+/* --- تم تاریک (Dark Mode) --- */
+body.dark-mode {
+    --bg-body: linear-gradient(135deg, #1c1c1e 0%, #000000 100%);
+    --bg-card: rgba(30, 30, 30, 0.60);
+    --bg-glass-strong: rgba(44, 44, 46, 0.85);
+    --bg-input: rgba(60, 60, 60, 0.5);
+
+    --text-main: #f2f2f7;
+    --text-secondary: #aeaeb2;
+    --text-muted: #636366;
+
+    --border-glass: rgba(255, 255, 255, 0.12);
+    --border-nav: rgba(255, 255, 255, 0.1);
+    
+    --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --shadow-hover: 0 16px 40px rgba(0, 0, 0, 0.6);
+    --shadow-nav: 0 10px 40px rgba(0, 0, 0, 0.5);
+
+    /* --- تنظیمات رنگ تگ آموزش (مخصوص دارک مود) --- */
+    --tag-bg: rgba(50, 215, 75, 0.2);
+    --tag-text: #86efac; /* سبز روشن نئونی برای خوانایی روی تیره */
+    
+    --primary-green: #30d158;
+    --info-blue: #0a84ff;
+    --warning-red: #ff453a;
+}
+
+/* =========================================
+   ۲. تنظیمات عمومی
+   ========================================= */
+* {
+    box-sizing: border-box;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0;
+    padding: 0 0 calc(var(--nav-height) + 20px) 0;
+    min-height: 100vh;
+    color: var(--text-main);
+    background: var(--bg-body);
+    background-attachment: fixed;
+    transition: background 0.4s ease, color 0.3s ease;
+}
+
+.main-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* انیمیشن نرم تب‌ها */
+.tab-section {
+    animation: fadeScale 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes fadeScale {
+    from { opacity: 0; transform: scale(0.98) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+header { text-align: center; margin-bottom: 35px; margin-top: 15px; }
+h1 { font-size: 2.2rem; font-weight: 900; margin: 0; letter-spacing: -0.5px; }
+.subtitle { 
+    font-size: 0.95rem; color: var(--text-secondary); margin-top: 8px; font-weight: 500;
+}
+
+/* =========================================
+   ۳. کارت‌های شیشه‌ای (Glassmorphism Core)
+   ========================================= */
+.controls-wrapper, .plant-card, .garden-card, .edu-card, .settings-container, .quiz-wrapper {
+    background: var(--bg-card);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-glass);
+    box-shadow: var(--shadow-glass);
+    padding: 24px;
+    margin-bottom: 24px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.plant-card:hover, .garden-card:hover, .edu-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* ورودی‌ها (Input Fields) */
+select, input, textarea {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid var(--border-glass);
+    border-radius: 18px;
+    background: var(--bg-input);
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    transition: 0.3s;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+}
+
+select:focus, input:focus, textarea:focus {
+    border-color: var(--primary-green);
+    background: var(--bg-glass-strong);
+    box-shadow: 0 0 0 4px rgba(52, 199, 89, 0.2);
+}
+
+button { cursor: pointer; font-family: inherit; }
+
+/* =========================================
+   ۴. نوار جستجو
+   ========================================= */
+.search-box { position: relative; margin-bottom: 20px; }
+.search-box input { padding-left: 50px; padding-right: 50px; border-radius: 50px; }
+.search-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 1.1rem; }
+.clear-btn { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; padding: 8px; opacity: 0.7; }
+.filters { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+
+/* =========================================
+   ۵. بخش دانشنامه (Encyclopedia)
+   ========================================= */
+.plant-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-glass);
+}
+.badge { 
+    background: var(--gradient-green); 
+    color: white; padding: 6px 14px; border-radius: 50px; 
+    font-size: 0.85rem; font-weight: 700; box-shadow: 0 4px 10px rgba(52, 199, 89, 0.3); 
+}
+
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
+.info-box {
+    background: var(--bg-input); padding: 15px; border-radius: 20px;
+    display: flex; align-items: center; gap: 15px; border: 1px solid var(--border-glass);
+}
+.info-icon {
+    width: 50px; height: 50px; background: var(--bg-glass-strong); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--primary-green); font-size: 1.4rem; box-shadow: var(--shadow-glass); flex-shrink: 0;
+}
+.info-content strong { display: block; color: var(--primary-green); font-size: 0.9rem; margin-bottom: 4px; }
+.info-content span { font-size: 0.95rem; line-height: 1.5; font-weight: 500; }
+
+/* دکمه‌های بزرگ */
+.btn-add-garden, .fab-add, .big-btn {
+    background: var(--gradient-green);
+    color: white; padding: 16px; border-radius: 20px; border: none; width: 100%;
+    font-size: 1.05rem; font-weight: 800; box-shadow: 0 10px 25px rgba(52, 199, 89, 0.3);
+    display: flex; justify-content: center; align-items: center; gap: 10px; transition: transform 0.2s;
+}
+.btn-add-garden:active, .fab-add:active { transform: scale(0.97); }
+
+.btn-wiki {
+    background: var(--bg-input); color: var(--text-main); border: 2px solid var(--border-glass);
+    padding: 14px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 0.95rem;
+    margin-top: 12px; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s;
+}
+.btn-wiki:hover { border-color: var(--info-blue); color: var(--info-blue); background: var(--bg-glass-strong); }
+
+/* شناسنامه داخلی */
+.wiki-section { background: var(--bg-input); border-top: 4px solid var(--info-blue); padding: 20px; margin-top: 25px; border-radius: 22px; }
+.wiki-title { color: var(--info-blue); margin: 0 0 15px 0; font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+.wiki-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.wiki-item { background: var(--bg-glass-strong); padding: 12px 15px; border-radius: 14px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--border-glass); }
+.wiki-icon { color: var(--info-blue); font-size: 1.2rem; }
+.wiki-text { display: flex; flex-direction: column; }
+.wiki-label { font-size: 0.75rem; color: var(--text-secondary); }
+.wiki-value { font-size: 0.9rem; font-weight: 700; }
+
+/* =========================================
+   ۶. باغچه و عیب‌یابی
+   ========================================= */
+.garden-card {
+    display: flex; justify-content: space-between; align-items: center;
+    position: relative; overflow: hidden; padding-right: 20px;
+}
+/* نوار وضعیت */
+.garden-card::after {
+    content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 6px;
+    background: var(--primary-green);
+}
+.garden-card.urgent::after { background: var(--warning-red); }
+
+.garden-info h3 { margin: 0 0 6px 0; font-size: 1.2rem; font-weight: 800; }
+.garden-info p { margin: 0; font-size: 0.9rem; color: var(--text-secondary); }
+
+.garden-actions { display: flex; flex-direction: column; gap: 10px; }
+.btn-water, .btn-delete {
+    padding: 10px 16px; border-radius: 12px; border: none; font-weight: 700; color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 6px;
+}
+.btn-water { background: var(--info-blue); }
+.btn-delete { background: var(--warning-red); }
+
+.trouble-box {
+    background: rgba(255, 59, 48, 0.08);
+    border-radius: 20px; padding: 20px; border: 1px solid rgba(255, 59, 48, 0.2); margin-bottom: 15px;
+}
+.trouble-title { color: var(--warning-red); font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.trouble-solution { font-size: 0.85rem; color: var(--primary-green); background: var(--bg-glass-strong); padding: 6px 14px; border-radius: 10px; display: inline-block; font-weight: 800; margin-top: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+/* =========================================
+   ۷. آموزش (Education) - بازنویسی شده
+   ========================================= */
+.edu-card { 
+    padding: 0; 
+    overflow: hidden; 
+    border-radius: 20px; 
+    margin-bottom: 20px;
+    border: none; /* حذف بردر برای یکپارچگی */
+    box-shadow: var(--shadow-glass);
+}
+
+.edu-header {
+    /* گرادینت سبز جذاب برای هدر */
+    background: linear-gradient(135deg, var(--secondary-green), var(--primary-green));
+    color: white; 
+    padding: 20px 24px; 
+    font-weight: 800; 
+    font-size: 1.05rem;
+    cursor: pointer; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    transition: filter 0.3s;
+}
+.edu-header:hover { filter: brightness(1.1); }
+
+/* متن داخل کارت آموزش */
+.edu-body {
+    padding: 25px; 
+    display: none; 
+    background: var(--bg-glass-strong); /* پس‌زمینه محتوا روشن/تیره مناسب */
+    line-height: 1.9; 
+    color: var(--text-main); /* رنگ متن اصلی */
+    border-top: none;
+}
+.edu-body.open { display: block; animation: fadeIn 0.4s; }
+
+/* تگ شماره فصل - اصلاح شده برای خوانایی */
+.tag { 
+    display: inline-block; 
+    background: var(--tag-bg); /* متغیر جدید */
+    color: var(--tag-text);    /* متغیر جدید */
+    padding: 6px 14px; 
+    border-radius: 8px; 
+    font-size: 0.85rem; 
+    margin-bottom: 15px; 
+    font-weight: 800; 
+    letter-spacing: 0.5px;
+}
+
+/* =========================================
+   ۸. آزمون (Quiz)
+   ========================================= */
+.center-box { text-align: center; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.quiz-icon { width: 100px; height: 100px; background: var(--bg-glass-strong); color: var(--primary-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; margin-bottom: 10px; box-shadow: var(--shadow-glass); }
+.stat-box { background: var(--bg-input); padding: 15px 30px; border-radius: 18px; border: 1px solid var(--border-glass); margin: 20px 0; font-weight: bold; }
+
+.quiz-header { display: flex; justify-content: space-between; margin-bottom: 20px; color: var(--text-secondary); font-weight: 700; }
+.progress-bar { width: 100%; height: 12px; background: rgba(0,0,0,0.1); border-radius: 50px; margin-bottom: 30px; overflow: hidden; }
+.progress-bar .fill { height: 100%; background: var(--gradient-green); border-radius: 50px; transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 0 10px rgba(52, 199, 89, 0.4); }
+.question-text { font-size: 1.25rem; font-weight: 800; margin-bottom: 30px; line-height: 1.7; }
+.options-grid { display: flex; flex-direction: column; gap: 14px; }
+
+.quiz-option {
+    background: var(--bg-input); border: 2px solid var(--border-glass); padding: 20px; border-radius: 18px;
+    text-align: right; font-size: 1.05rem; transition: 0.2s; cursor: pointer; color: var(--text-main); font-weight: 600;
+}
+.quiz-option:hover { border-color: var(--primary-green); background: var(--bg-glass-strong); transform: scale(1.02); }
+.quiz-option.correct { background-color: rgba(52, 199, 89, 0.2) !important; border-color: var(--primary-green) !important; color: var(--text-main) !important; }
+.quiz-option.wrong { background-color: rgba(255, 59, 48, 0.2) !important; border-color: var(--warning-red) !important; color: var(--text-main) !important; }
+
+/* دکمه‌های پایان آزمون (با استایل جدید) */
+.quiz-actions { display: flex; gap: 15px; width: 100%; margin-top: 30px; }
+.quiz-actions button {
+    flex: 1; padding: 16px; border-radius: 50px; font-weight: 800; border: none; cursor: pointer; font-size: 1rem;
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.quiz-actions button:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+.quiz-actions .btn-confirm { background: var(--gradient-green); color: white; box-shadow: 0 5px 15px rgba(52, 199, 89, 0.3); }
+.quiz-actions .btn-cancel { background: var(--bg-glass-strong); color: var(--text-secondary); border: 2px solid var(--border-glass); }
+
+.result-circle { width: 150px; height: 150px; border: 12px solid; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: 900; margin-bottom: 25px; animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); background: var(--bg-glass-strong); box-shadow: var(--shadow-glass); }
+.new-record { background: var(--gold); color: #000; padding: 8px 24px; border-radius: 50px; font-weight: 800; animation: pulse 1.5s infinite; margin-top: 15px; box-shadow: 0 5px 15px rgba(251, 192, 45, 0.4); }
+
+/* =========================================
+   ۹. تنظیمات
+   ========================================= */
+.settings-container { display: flex; flex-direction: column; gap: 20px; }
+.setting-item {
+    display: flex; justify-content: space-between; align-items: center; padding: 22px;
+    background: var(--bg-glass-strong); border-radius: 22px; box-shadow: var(--shadow-glass); border: 1px solid var(--border-glass);
+}
+.setting-label { display: flex; align-items: center; gap: 15px; font-weight: 700; font-size: 1.1rem; }
+.setting-label i { color: var(--primary-green); font-size: 1.5rem; background: rgba(52, 199, 89, 0.1); padding: 10px; border-radius: 12px; }
+
+/* توسعه دهنده */
+.setting-item.developer-card {
+    flex-direction: column !important; align-items: center !important; text-align: center;
+    padding: 40px 25px !important; margin-top: 15px; border-top: 5px solid var(--primary-green);
+}
+.dev-avatar {
+    width: 110px; height: 110px; background: var(--bg-glass-strong); color: var(--primary-green);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 3.5rem; margin-bottom: 15px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); border: 4px solid var(--bg-input);
+}
+.dev-name { margin: 0; color: var(--text-main); font-size: 1.5rem; font-weight: 900; }
+.dev-title { font-size: 1rem; color: var(--text-secondary); margin: 5px 0 25px 0; opacity: 0.9; }
+.dev-email {
+    display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+    background: var(--bg-input); color: var(--text-main); padding: 14px 28px;
+    border-radius: 50px; font-size: 1rem; margin-bottom: 25px; border: 1px solid var(--border-glass);
+    transition: 0.3s; font-weight: 600;
+}
+.dev-email:hover { background: var(--primary-green); color: white; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(52, 199, 89, 0.25); border-color: transparent; }
+
+/* سوییچ */
+.switch { position: relative; display: inline-block; width: 56px; height: 32px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(120,120,128,0.2); transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 28px; width: 28px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+input:checked + .slider { background-color: var(--primary-green); }
+input:checked + .slider:before { transform: translateX(24px); }
+
+/* =========================================
+   ۱۰. نوار ناوبری پایین (Liquid Glass Dock)
+   ========================================= */
+.bottom-nav {
+    position: fixed;
+    bottom: 25px; 
+    left: 20px; 
+    right: 20px; 
+    height: 80px;
+    background: rgba(255, 255, 255, 0.65); /* شیشه روشن */
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border-radius: 40px; /* کاملا گرد */
+    display: flex; 
+    justify-content: space-around; 
+    align-items: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15); /* سایه عمیق */
+    z-index: 1000;
+    border: 1px solid var(--border-nav);
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+body.dark-mode .bottom-nav {
+    background: rgba(30, 30, 30, 0.65); /* شیشه تیره */
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+}
+
+.nav-item {
+    background: none; border: none; color: var(--text-secondary);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 5px; padding: 0; width: 60px; height: 100%; transition: 0.3s;
+    position: relative;
+}
+
+.nav-item i { 
+    font-size: 1.6rem; 
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    opacity: 0.6;
+}
+
+.nav-item span { 
+    font-size: 0.7rem; 
+    font-weight: 700; 
+    opacity: 0.6; 
+    transition: 0.3s;
+}
+
+/* حالت اکتیو نویگیشن */
+.nav-item.active i { 
+    transform: translateY(-6px) scale(1.15); 
+    color: var(--primary-green);
+    opacity: 1;
+    filter: drop-shadow(0 4px 12px rgba(52, 199, 89, 0.4)); /* درخشش آیکون */
+}
+
+.nav-item.active span {
+    color: var(--primary-green);
+    opacity: 1;
+    transform: translateY(-4px);
+}
+
+/* =========================================
+   ۱۱. مودال‌ها (اصلاح شده و فیکس)
+   ========================================= */
+.modal {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    z-index: 9999; justify-content: center; align-items: center; animation: fadeIn 0.2s;
+}
+.modal-content {
+    background: var(--bg-glass-strong); color: var(--text-main);
+    width: 90%; max-width: 420px; padding: 35px; border-radius: 32px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.3); border: 1px solid var(--border-glass);
+    animation: scaleUp 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    max-height: 85vh; overflow-y: auto;
+}
+@keyframes scaleUp { from { transform: scale(0.9) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-actions { display: flex; gap: 15px; margin-top: 30px; }
+.modal-actions button { flex: 1; padding: 16px; border: none; border-radius: 16px; font-weight: 800; font-size: 1.05rem; }
+.btn-confirm { background: var(--gradient-green); color: white; box-shadow: 0 8px 20px rgba(52, 199, 89, 0.25); }
+.btn-cancel { background: var(--bg-input); color: var(--text-secondary); border: 1px solid var(--border-glass); }
+
+/* لاگ‌ها */
+.log-item { display: flex; gap: 15px; margin-bottom: 20px; position: relative; }
+.log-item::before { content: ''; position: absolute; right: 20px; top: 40px; bottom: -25px; width: 2px; background: var(--border-glass); z-index: 0; }
+.log-item:last-child::before { display: none; }
+.log-icon { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; z-index: 1; flex-shrink: 0; box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
+.type-water { background: #4cc9f0; } .type-fertilizer { background: #f72585; } .type-growth { background: #4361ee; } .type-soil { background: #7209b7; } .type-pest { background: #e63946; } .type-prune { background: #fb8500; } .type-other { background: #adb5bd; }
+.log-content { background: var(--bg-input); padding: 15px 20px; border-radius: 20px; flex: 1; border: 1px solid var(--border-glass); box-shadow: var(--shadow-glass); } =========================================
    ۱. متغیرها و پالت رنگی (Apple Glass Style)
    ========================================= */
 :root {
