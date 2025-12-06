@@ -1,9 +1,20 @@
 export function EduItem(item, index) {
+    // انتخاب آیکون بر اساس دسته‌بندی
+    let icon = "fa-book";
+    if(item.category && item.category.includes("تغذیه")) icon = "fa-flask";
+    if(item.category && item.category.includes("آفات")) icon = "fa-bug";
+    if(item.category && item.category.includes("آبیاری")) icon = "fa-tint";
+    if(item.category && item.category.includes("خاک")) icon = "fa-layer-group";
+    if(item.category && item.category.includes("نور")) icon = "fa-sun";
+    if(item.category && item.category.includes("تکثیر")) icon = "fa-cut";
+    if(item.category && item.category.includes("عیب‌یابی")) icon = "fa-user-md";
+
     return `
         <div class="edu-card">
             <div class="edu-header" onclick="app.toggleEdu(${index})">
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <i class="fas fa-book-open"></i> ${item.title}
+                    <i class="fas ${icon}" style="color:rgba(255,255,255,0.9)"></i>
+                    <span>${item.title}</span>
                 </div>
                 <i class="fas fa-chevron-down"></i>
             </div>
