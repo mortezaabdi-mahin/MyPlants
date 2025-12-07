@@ -1220,6 +1220,7 @@ body.dark-mode .bottom-nav {
   gap: 10px;
 }
 
+
 /* Responsive */
 @media (max-width: 600px) {
   .info-grid {
@@ -1237,4 +1238,38 @@ body.dark-mode .bottom-nav {
   .wiki-grid {
     grid-template-columns: 1fr;
   }
+}
+/* استایل عکس‌های بخش آموزش */
+.edu-img-wrapper {
+    margin: 10px 0 15px 0;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-glass);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    cursor: zoom-in;
+}
+
+.edu-img-wrapper:active {
+    transform: scale(1.5); /* زوم ساده هنگام نگه داشتن کلیک یا تاچ */
+    z-index: 100;
+}
+
+.edu-img-wrapper img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.edu-img-hint {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-top-left-radius: 10px;
+    backdrop-filter: blur(4px);
 }
