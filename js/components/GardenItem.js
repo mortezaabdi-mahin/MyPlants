@@ -1,5 +1,5 @@
 export function EduItem(item, index) {
-    // انتخاب آیکون بر اساس دسته‌بندی
+ 
     let icon = "fa-book";
     if(item.category && item.category.includes("تغذیه")) icon = "fa-flask";
     if(item.category && item.category.includes("آفات")) icon = "fa-bug";
