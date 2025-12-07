@@ -1,5 +1,4 @@
 export function EduItem(item, index) {
-    // انتخاب آیکون بر اسexport function EduItem(item, index) {
     // انتخاب آیکون بر اساس دسته‌بندی
     let icon = "fa-book";
     if(item.category && item.category.includes("تغذیه")) icon = "fa-flask";
@@ -10,7 +9,7 @@ export function EduItem(item, index) {
     if(item.category && item.category.includes("تکثیر")) icon = "fa-cut";
     if(item.category && item.category.includes("عیب‌یابی")) icon = "fa-user-md";
 
-    // بخش جدید: اگر تصویر وجود داشت، کد HTML آن ساخته شود
+    // بررسی وجود تصویر و ساخت کد HTML مربوط به آن
     let imageHtml = '';
     if (item.image) {
         imageHtml = `
@@ -21,6 +20,7 @@ export function EduItem(item, index) {
         `;
     }
 
+    // ساخت قالب نهایی
     return `
         <div class="edu-card">
             <div class="edu-header" onclick="app.toggleEdu(${index})">
@@ -32,32 +32,7 @@ export function EduItem(item, index) {
             </div>
             <div class="edu-body" id="edu-${index}">
                 <span class="tag">${item.category}</span>
-                ${imageHtml} <!-- نمایش عکس در اینجا -->
-                <div class="edu-text">${item.content}</div>
-            </div>
-        </div>
-    `;
-}اس دسته‌بندی
-    let icon = "fa-book";
-    if(item.category && item.category.includes("تغذیه")) icon = "fa-flask";
-    if(item.category && item.category.includes("آفات")) icon = "fa-bug";
-    if(item.category && item.category.includes("آبیاری")) icon = "fa-tint";
-    if(item.category && item.category.includes("خاک")) icon = "fa-layer-group";
-    if(item.category && item.category.includes("نور")) icon = "fa-sun";
-    if(item.category && item.category.includes("تکثیر")) icon = "fa-cut";
-    if(item.category && item.category.includes("عیب‌یابی")) icon = "fa-user-md";
-
-    return `
-        <div class="edu-card">
-            <div class="edu-header" onclick="app.toggleEdu(${index})">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <i class="fas ${icon}" style="color:rgba(255,255,255,0.9)"></i>
-                    <span>${item.title}</span>
-                </div>
-                <i class="fas fa-chevron-down"></i>
-            </div>
-            <div class="edu-body" id="edu-${index}">
-                <span class="tag">${item.category}</span>
+                ${imageHtml}
                 <div class="edu-text">${item.content}</div>
             </div>
         </div>
