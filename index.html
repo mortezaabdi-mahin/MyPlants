@@ -197,7 +197,7 @@
             </a>
 
             <div class="app-version-info">
-              <span class="version-tag">نسخه 1.1.0</span>
+              <span class="version-tag">نسخه 1.2.0</span>
               <p style="margin: 5px 0 0 0; font-size: 0.8rem">
                 تمامی حقوق محفوظ است © 2025
               </p>
@@ -237,6 +237,7 @@
         <h3 style="margin: 0 0 15px 0; font-size: 1.1rem">
           افزودن به باغچه من
         </h3>
+        
         <label
           style="
             display: block;
@@ -266,6 +267,26 @@
           دوره‌ی آبیاری (روز):
         </label>
         <input type="number" id="modal-days" value="7" />
+
+        <!-- بخش جدید: آپلود عکس -->
+        <label
+          style="
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+          "
+        >
+          تصویر گیاه (اختیاری):
+        </label>
+        <input 
+            type="file" 
+            id="modal-plant-image" 
+            accept="image/*" 
+            style="padding: 8px; background: rgba(255,255,255,0.8);" 
+        />
+        <!-- پایان بخش جدید -->
 
         <div class="modal-actions">
           <button onclick="app.closeModal('add-modal')" class="btn-cancel">
