@@ -1,5 +1,6 @@
 import { GardenItem } from '../components/GardenItem.js';
-import { DiaryItem } from '../components/DiaryItem.js'; 
+import { DiaryItem } from '../components/DiaryItem.js';
+import { get, set } from './Database.js'; // استفاده از دیتابیس اصلی
 
 let selectedPlant = null;
 let currentDiaryId = null;
@@ -8,32 +9,56 @@ let currentDiaryId = null;
 export function openAddModal(name) {
     selectedPlant = name;
     document.getElementById('modal-nickname').value = name;
+    // پاک کردن ورودی عکس قبلی اگر وجود دارد
+    const imgInput = document.getElementById('modal-plant-image');
+    if(imgInput) imgInput.value = '';
+    
     document.getElementById('add-modal').style.display = 'flex';
 }
 
-export function confirmAdd() {
+// تبدیل عکس به فرمت متنی برای ذخیره در دیتابیس
+const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
+        fileReader.onload = () => resolve(fileReader.result);
+        fileReader.onerror = (error) => reject(error);
+    });
+};
+
+export async function confirmAdd() {
     const nick = document.getElementById('modal-nickname').value || selectedPlant;
     const days = parseInt(document.getElementById('modal-days').value) || 7;
+    const fileInput = document.getElementById('modal-plant-image');
     
-    const garden = getGarden();
+    let imageBase64 = null;
+    if (fileInput && fileInput.files[0]) {
+        try {
+            imageBase64 = await convertBase64(fileInput.files[0]);
+        } catch (e) {
+            console.error("Image Error", e);
+        }
+    }
+    
+    const garden = await getGardenData();
     garden.push({
         id: Date.now(),
         originalName: selectedPlant,
         nickname: nick,
         waterInterval: days,
         lastWatered: new Date().toISOString(),
+        image: imageBase64, // ذخیره عکس
         logs: []
     });
     
-    saveGarden(garden);
+    await saveGardenData(garden);
     document.getElementById('add-modal').style.display = 'none';
-    alert('گیاه با موفقیت اضافه شد!');
-    render(); // رفرش لیست
+    render(); 
 }
 
 // --- نمایش لیست باغچه ---
-export function render() {
-    const garden = getGarden();
+export async function render() {
+    const garden = await getGardenData();
     const list = document.getElementById('my-garden-list');
     
     if(!garden || garden.length === 0) {
@@ -41,42 +66,40 @@ export function render() {
         return;
     }
     
-    // استفاده از کامپوننت GardenItem
+    // رندرсинکرونوس (چون GardenItem تابع ساده است)
     list.innerHTML = garden.map(p => GardenItem(p)).join('');
 }
 
 // --- آبیاری و حذف ---
-export function water(id) {
-    const garden = getGarden();
+export async function water(id) {
+    const garden = await getGardenData();
     const p = garden.find(item => item.id === id);
     if(p) {
         p.lastWatered = new Date().toISOString();
-        
-        // ثبت خودکار در دفترچه
         if(!p.logs) p.logs = [];
         p.logs.push({
-            id: Date.now(),
-            type: 'water',
-            date: new Date().toISOString().slice(0,10),
-            note: 'آبیاری ثبت شد (خودکار)'
+            id: Date.now(), type: 'water', date: new Date().toISOString().slice(0,10), note: 'آبیاری ثبت شد (خودکار)'
         });
         
-        saveGarden(garden);
+        await saveGardenData(garden);
         render();
+        checkNotifications(); // بررسی برای نوتیفیکیشن بعدی
     }
 }
 
-export function deleteP(id) {
+export async function deleteP(id) {
     if(!confirm('آیا از حذف این گیاه مطمئن هستید؟')) return;
-    const garden = getGarden().filter(i => i.id !== id);
-    saveGarden(garden);
+    let garden = await getGardenData();
+    garden = garden.filter(i => i.id !== id);
+    await saveGardenData(garden);
     render();
 }
 
-// --- مدیریت دفترچه خاطرات (Diary) ---
-export function openDiary(id) {
+// --- مدیریت دفترچه خاطرات ---
+export async function openDiary(id) {
     currentDiaryId = id;
-    const p = getGarden().find(item => item.id === id);
+    const garden = await getGardenData();
+    const p = garden.find(item => item.id === id);
     if(p) {
         document.getElementById('diary-title').innerText = `تاریخچه: ${p.nickname}`;
         document.getElementById('diary-modal').style.display = 'flex';
@@ -84,71 +107,64 @@ export function openDiary(id) {
     }
 }
 
-export function saveLog() {
+export async function saveLog() {
     const type = document.getElementById('log-type').value;
-    // اگر تاریخ خالی بود، امروز را بزن
     const dateInput = document.getElementById('log-date').value;
     const date = dateInput || new Date().toISOString().slice(0,10);
     const note = document.getElementById('log-note').value;
     
     if(!note.trim()) return alert('لطفاً متنی بنویسید');
     
-    const garden = getGarden();
+    const garden = await getGardenData();
     const p = garden.find(i => i.id === currentDiaryId);
     
     if(p) {
         if(!p.logs) p.logs = [];
+        p.logs.push({ id: Date.now(), type, date, note });
         
-        const newLog = { id: Date.now(), type, date, note };
-        p.logs.push(newLog);
+        if(type === 'water') p.lastWatered = new Date().toISOString();
         
-        // اگر نوع لاگ آبیاری بود، زمان آبیاری گیاه هم آپدیت شود
-        if(type === 'water') {
-            p.lastWatered = new Date().toISOString();
-        }
-        
-        saveGarden(garden);
+        await saveGardenData(garden);
         renderLogs(p);
-        render(); // برای آپدیت وضعیت کارت اصلی
-        
-        // خالی کردن ورودی
+        render();
         document.getElementById('log-note').value = '';
     }
 }
 
-export function deleteLog(logId) {
+export async function deleteLog(logId) {
     if(!confirm("آیا این یادداشت حذف شود؟")) return;
-    
-    const garden = getGarden();
+    const garden = await getGardenData();
     const p = garden.find(i => i.id === currentDiaryId);
-    
     if(p && p.logs) {
         p.logs = p.logs.filter(l => l.id !== logId);
-        saveGarden(garden);
+        await saveGardenData(garden);
         renderLogs(p);
     }
 }
 
 function renderLogs(plant) {
     const list = document.getElementById('diary-list');
-    
     if(!plant.logs || plant.logs.length === 0) {
-        list.innerHTML = '<div class="empty-state" style="font-size:0.9rem; padding:20px;">هنوز رویدادی ثبت نشده است.</div>';
+        list.innerHTML = '<div class="empty-state" style="font-size:0.9rem;">هنوز رویدادی ثبت نشده است.</div>';
         return;
     }
-    
-    // مرتب‌سازی از جدید به قدیم
     const sorted = plant.logs.sort((a,b) => new Date(b.date) - new Date(a.date));
-    
-    // استفاده از کامپوننت DiaryItem
     list.innerHTML = sorted.map(log => DiaryItem(log)).join('');
 }
 
-// --- توابع کمکی LocalStorage ---
-function getGarden() { 
-    return JSON.parse(localStorage.getItem('myGarden')) || []; 
+// --- توابع کمکی دیتابیس (جایگزین LocalStorage) ---
+async function getGardenData() {
+    const data = await get('myGarden');
+    return data || [];
 }
 
-function saveGarden(data) { 
-    localStorage.setItem('myGarden', JSON.stringify(data)); 
+async function saveGardenData(data) {
+    await set('myGarden', data);
+}
+
+// درخواست مجوز نوتیفیکیشن
+export function checkNotifications() {
+    if ("Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission();
+    }
 }
