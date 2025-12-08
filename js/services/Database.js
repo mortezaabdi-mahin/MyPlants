@@ -1,35 +1,43 @@
-const DB_NAME = 'PlantAppDB';
-const STORE_NAME = 'keyval';
-const DB_VERSION = 1;
+const DB_NAME = "PlantAppDB";
+const STORE_NAME = "keyval";
 
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-        request.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME);
-        };
-        request.onsuccess = (e) => resolve(e.target.result);
-        request.onerror = (e) => reject(e.target.error);
-    });
-}
+// Safe Get - با پاک‌سازی داده‌های خراب
+const safeGet = async (key) => {
+  try {
+    if (typeof localStorage !== "undefined") {
+      const item = localStorage.getItem(key);
+      if (!item) return null;
 
-export async function get(key) {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readonly');
-        const req = tx.objectStore(STORE_NAME).get(key);
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-    });
-}
+      // سعی کنید پارس کنید
+      return JSON.parse(item);
+    }
+  } catch (e) {
+    // داده‌های خراب را پاک کن
+    console.warn(`⚠️ Storage خراب (${key}): ${e.message}`);
+    try {
+      localStorage.removeItem(key);
+    } catch (clearErr) {
+      console.warn(`⚠️ نتوانستم ${key} را پاک کنم`);
+    }
+  }
+  return null;
+};
 
-export async function set(key, val) {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        const req = tx.objectStore(STORE_NAME).put(val, key);
-        req.onsuccess = () => resolve();
-        req.onerror = () => reject(req.error);
-    });
-}
+// Safe Set - بررسی قبل از ذخیره
+const safeSet = async (key, value) => {
+  try {
+    if (typeof localStorage !== "undefined") {
+      const serialized = JSON.stringify(value);
+      localStorage.setItem(key, serialized);
+      console.log(`✅ ${key} ذخیره شد`);
+      return true;
+    }
+  } catch (e) {
+    console.warn(`⚠️ Storage مسدود (${key}): ${e.message}`);
+    // اگر مسدود است، سکوت کن (نه خطا)
+    return false;
+  }
+};
+
+export const get = safeGet;
+export const set = safeSet;
