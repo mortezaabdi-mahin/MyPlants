@@ -26,12 +26,21 @@
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#2d6a4f" />
     <link rel="apple-touch-icon" href="icon-192.png" />
-<!-- شروع کد دیباگر Eruda -->
-<script src="//cdn.jsdelivr.net/npm/eruda"></script>
-<script>
-  eruda.init();
-</script>
-<!-- پایان کد دیباگر -->
+    <!-- شروع کد دیباگر Eruda -->
+    <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+    <script>
+      eruda.init();
+    </script>
+    <!-- پایان کد دیباگر -->
+
+    <!-- ✅ حذف favicon اگر موجود نیست -->
+    <!-- <link rel="icon" type="image/png" href="favicon.ico"> -->
+
+    <!-- یا استفاده از emoji favicon -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>"
+    />
   </head>
   <body>
     <div class="main-content">
@@ -243,7 +252,7 @@
         <h3 style="margin: 0 0 15px 0; font-size: 1.1rem">
           افزودن به باغچه من
         </h3>
-        
+
         <label
           style="
             display: block;
@@ -286,11 +295,11 @@
         >
           تصویر گیاه (اختیاری):
         </label>
-        <input 
-            type="file" 
-            id="modal-plant-image" 
-            accept="image/*" 
-            style="padding: 8px; background: rgba(255,255,255,0.8);" 
+        <input
+          type="file"
+          id="modal-plant-image"
+          accept="image/*"
+          style="padding: 8px; background: rgba(255, 255, 255, 0.8)"
         />
         <!-- پایان بخش جدید -->
 
