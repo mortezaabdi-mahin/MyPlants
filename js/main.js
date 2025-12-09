@@ -4,8 +4,11 @@ import * as Garden from "./services/GardenManager.js";
 import * as Wiki from "./services/WikiService.js";
 import * as Settings from "./services/SettingsManager.js";
 import * as Quiz from "./services/QuizManager.js";
+import * as Game from "./services/GameManager.js";
 import { fetchJson } from "./utils.js";
+import { jalaliPicker } from "./services/JalaliDatePicker.js"; // ✅ اضافه شد
 import { EduItem } from "./components/EduItem.js";
+import { GameComponent } from "./components/GameComponent.js";
 import DEBUG from "./debug.js";
 
 let eduData = [];
@@ -70,7 +73,7 @@ function switchTab(tabName) {
   document
     .querySelectorAll(".nav-item")
     .forEach((el) => el.classList.remove("active"));
-  const tabs = ["home", "garden", "quiz", "edu", "settings"];
+  const tabs = ["home", "garden", "quiz", "edu", "settings", "game"];
   const index = tabs.indexOf(tabName);
   if (index > -1) {
     document.querySelectorAll(".nav-item")[index].classList.add("active");
@@ -79,6 +82,7 @@ function switchTab(tabName) {
   if (tabName === "garden") Garden.render();
   if (tabName === "edu") renderEdu();
   if (tabName === "quiz") Quiz.renderQuizTab();
+  if (tabName === "game") Game.renderGameTab();
 }
 
 function closeModal(modalId) {
@@ -86,10 +90,12 @@ function closeModal(modalId) {
   if (modal) modal.style.display = "none";
 }
 
-// اتصال توابع به شیء global
+// ✅ تعریف window.app قبل از استفاده
 window.app = {
+  // ✅ توابع جدید دانشنامه
   filterPlants: Encyclo.filter,
   displayPlantInfo: Encyclo.displayPlantInfo,
+  showPlantDetail: Encyclo.showPlantDetail,
   clearSearch: Encyclo.clearSearch,
   openAddModal: Garden.openAddModal,
   confirmAddToGarden: Garden.confirmAdd,
@@ -100,16 +106,101 @@ window.app = {
   deleteLog: Garden.deleteLog,
   fetchWiki: Wiki.fetchWiki,
   toggleDarkMode: Settings.toggleDarkMode,
+  toggleNotifications: Settings.toggleNotifications,
+  changeFontSize: Settings.changeFontSize,
+  saveProfile: Settings.saveProfile,
   backupData: Settings.backup,
-  triggerRestore:
-    Settings.triggerRestore ||
-    (() => document.getElementById("restore-input").click()),
+  triggerRestore: Settings.triggerRestore,
   restoreData: Settings.restore,
+  exportAllData: Settings.exportAllData,
+  clearCache: Settings.clearCache,
+  resetData: Settings.resetData,
+
+  // ✅ توابع آزمون
   startQuiz: Quiz.startQuiz,
   submitAnswer: Quiz.submitAnswer,
+  viewQuizStats: Quiz.viewQuizStats,
+
+  // ✅ توابع بازی
+  startGarden: Game.startGame,
+  gameAction: Game.performGameAction,
+  viewGameGuide: Game.showGameGuide,
+
+  // ✅ توابع گالری
+  openGallery: Garden.openGallery,
+  addPhotoToGallery: async (plantId) => {
+    // تابع تعریف شده در GardenManager
+  },
+  deleteGalleryImage: async (plantId, imageId) => {
+    // تابع تعریف شده در GardenManager
+  },
+  editGalleryCaption: async (plantId, imageId) => {
+    // تابع تعریف شده در GardenManager
+  },
+  toggleGalleryPublic: async (plantId) => {
+    // تابع تعریف شده در GardenManager
+  },
+  switchGalleryTab: function (tabName, button) {
+    // تابع تعریف شده در GardenManager
+  },
+  openPhotoFullscreen: function (imageSrc) {
+    // تابع تعریف شده در GardenManager
+  },
+
+  // ✅ توابع عمومی
   switchTab: switchTab,
   closeModal: closeModal,
   toggleEdu: toggleEdu,
+
+  toggleAccordion: function (button) {
+    const header = button;
+    const content = header.nextElementSibling;
+
+    document.querySelectorAll(".accordion-header").forEach((h) => {
+      if (h !== header && h.classList.contains("active")) {
+        h.classList.remove("active");
+        h.nextElementSibling.classList.remove("open");
+      }
+    });
+
+    header.classList.toggle("active");
+    content.classList.toggle("open");
+  },
+
+  async showStorageUsage() {
+    const estimate = await navigator.storage?.estimate?.();
+    if (estimate) {
+      const used = (estimate.usage / 1024 / 1024).toFixed(2);
+      const quota = (estimate.quota / 1024 / 1024).toFixed(2);
+      document.getElementById(
+        "storage-usage"
+      ).textContent = `${used}MB / ${quota}MB`;
+    }
+  },
+
+  switchPlantTab: function (tabName, button) {
+    document.querySelectorAll(".plant-tab-content").forEach((el) => {
+      el.classList.remove("active");
+    });
+
+    document.querySelectorAll(".plant-tab-btn").forEach((btn) => {
+      btn.classList.remove("active");
+    });
+
+    const tab = document.getElementById(`plant-tab-${tabName}`);
+    if (tab) {
+      tab.classList.add("active");
+    }
+
+    if (button) {
+      button.classList.add("active");
+    }
+  },
+
+  // ✅ دیت‌پیکر شمسی
+  openJalaliPicker: function () {
+    jalaliPicker.render();
+  },
 };
 
 window.onload = async () => {
@@ -117,12 +208,17 @@ window.onload = async () => {
     console.log("🚀 شروع بارگذاری برنامه...");
 
     await Settings.initTheme();
-    console.log("✅ تم بارگذاری شد");
+    await Settings.initNotifications();
+    await Settings.initFontSize();
+    await Settings.loadProfile();
+
+    console.log("✅ تنظیمات بارگذاری شدند");
 
     await Promise.all([
       Encyclo.loadData(),
       loadEdu(),
       Quiz.loadQuizData(),
+      Game.startGame(),
     ]);
 
     console.log("✅ تمام داده‌ها بارگذاری شدند");
@@ -133,7 +229,12 @@ window.onload = async () => {
       });
     }
 
-    console.log("%c✅ برنامه با موفقیت شروع شد!", "color: #4CAF50; font-weight: bold;");
+    app.showStorageUsage();
+
+    console.log(
+      "%c✅ برنامه با موفقیت شروع شد!",
+      "color: #4CAF50; font-weight: bold;"
+    );
   } catch (e) {
     console.error("❌ خطای بحرانی:", e);
   }
