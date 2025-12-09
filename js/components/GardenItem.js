@@ -56,6 +56,9 @@ export function GardenItem(plant) {
                 <button class="btn-water" style="padding: 6px 10px;" onclick="app.waterPlant(${
                   plant.id
                 })"><i class="fas fa-tint"></i></button>
+                <button class="btn-gallery" style="padding: 6px 10px; background: #e91e63; color: white; border-radius: 5px;" onclick="app.openGallery(${
+                  plant.id
+                })"><i class="fas fa-images"></i></button>
             </div>
         </div>
         
