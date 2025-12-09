@@ -1,0 +1,68 @@
+.bottom-nav {
+  position: fixed;
+  bottom: 15px;
+  left: 12px;
+  right: 12px;
+  height: 65px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border-radius: 35px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  border: 1px solid var(--border-nav);
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 0 5px;
+}
+
+body.dark-mode .bottom-nav {
+  background: rgba(30, 30, 30, 0.65);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 0;
+  width: 55px;
+  height: 100%;
+  transition: 0.3s;
+  position: relative;
+  cursor: pointer;
+}
+
+.nav-item i {
+  font-size: 1.35rem;
+  transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  opacity: 0.6;
+}
+
+.nav-item span {
+  font-size: 0.6rem;
+  font-weight: 700;
+  opacity: 0.6;
+  transition: 0.3s;
+}
+
+.nav-item.active i {
+  transform: translateY(-5px) scale(1.15);
+  color: var(--primary-green);
+  opacity: 1;
+  filter: drop-shadow(0 3px 10px rgba(52, 199, 89, 0.35));
+}
+
+.nav-item.active span {
+  color: var(--primary-green);
+  opacity: 1;
+  transform: translateY(-3px);
+}
