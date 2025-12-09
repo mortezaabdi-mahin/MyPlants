@@ -1,82 +1,203 @@
 import { fetchJson } from "../utils.js";
 import { PlantCard } from "../components/PlantCard.js";
 
-let plantData = {};
+let plantData = [];
+let filteredPlants = [];
+let currentPlant = null;
 
 export async function loadData() {
-  plantData = (await fetchJson("plants.json")) || {};
-  populateFilters();
-  filter(); // نمایش اولیه
+  try {
+    console.log("📚 شروع بارگذاری گیاهان...");
+    const data = await fetchJson("./plants.json");
+
+    if (data && typeof data === "object") {
+      plantData = Object.entries(data).map(([name, info]) => ({
+        name,
+        ...info,
+      }));
+      console.log(`✅ ${plantData.length} گیاه بارگذاری شد`);
+
+      // ✅ پرکردن فیلترها
+      populateFilters();
+
+      // ✅ نمایش اولیه تمام گیاهان
+      filteredPlants = plantData;
+      displayPlants(plantData);
+      populatePlantSelector();
+    }
+  } catch (e) {
+    console.error("❌ خطا:", e);
+  }
 }
 
+// ✅ پرکردن فیلترهای دسته‌بندی و نور
 function populateFilters() {
+  const groups = new Set();
+  const lights = new Set();
+
+  plantData.forEach((plant) => {
+    if (plant.گروه) groups.add(plant.گروه);
+    if (plant.نور) lights.add(plant.نور);
+  });
+
   const groupSelect = document.getElementById("group-filter");
   const lightSelect = document.getElementById("light-filter");
-  const groups = new Set();
 
-  for (const k in plantData)
-    if (plantData[k].گروه) groups.add(plantData[k].گروه);
+  if (groupSelect) {
+    groupSelect.innerHTML = '<option value="">تمام دسته‌بندی‌ها</option>';
+    groups.forEach((group) => {
+      groupSelect.innerHTML += `<option value="${group}">${group}</option>`;
+    });
+  }
 
-  groupSelect.innerHTML = '<option value="all">همه</option>';
-  groups.forEach(
-    (g) => (groupSelect.innerHTML += `<option value="${g}">${g}</option>`)
-  );
-
-  lightSelect.innerHTML = `
-        <option value="all">همه</option>
-        <option value="low">سایه‌دوست</option>
-        <option value="medium">متوسط</option>
-        <option value="high">پرنور</option>
-    `;
+  if (lightSelect) {
+    lightSelect.innerHTML = '<option value="">تمام نورها</option>';
+    lights.forEach((light) => {
+      lightSelect.innerHTML += `<option value="${light}">${light}</option>`;
+    });
+  }
 }
 
+// ✅ جستجو و فیلتر بهبود شده
 export function filter() {
-  const txt = document.getElementById("search-input").value.trim();
-  const grp = document.getElementById("group-filter").value;
-  const lgt = document.getElementById("light-filter").value;
+  const searchTerm = (
+    document.getElementById("search-input")?.value || ""
+  ).toLowerCase();
+  const groupFilter = document.getElementById("group-filter")?.value || "";
+  const lightFilter = document.getElementById("light-filter")?.value || "";
+
+  filteredPlants = plantData.filter((plant) => {
+    const matchName =
+      plant.name.toLowerCase().includes(searchTerm) ||
+      (plant.نام_علمی && plant.نام_علمی.includes(searchTerm));
+
+    const matchGroup = !groupFilter || plant.گروه === groupFilter;
+    const matchLight = !lightFilter || plant.نور === lightFilter;
+
+    return matchName && matchGroup && matchLight;
+  });
+
+  // ✅ پرکردن selector
+  populatePlantSelector();
+
+  // نمایش نتیجه - لیست گیاهان فیلتر شده
+  if (filteredPlants.length > 0) {
+    displayPlants(filteredPlants);
+  } else {
+    document.getElementById("results").innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-search"></i>
+        <p>گیاهی یافت نشد. دوباره تلاش کنید.</p>
+      </div>
+    `;
+  }
+
+  console.log(`🔍 ${filteredPlants.length} گیاه پیدا شد`);
+}
+
+// ✅ پرکردن selector جدید
+function populatePlantSelector() {
   const selector = document.getElementById("plant-selector");
-  const results = document.getElementById("results");
+  if (!selector) return;
 
-  selector.innerHTML = '<option value="">-- انتخاب --</option>';
-  results.innerHTML =
-    '<div class="empty-state"><i class="fas fa-search"></i><p>جستجو کنید</p></div>';
+  selector.innerHTML = '<option value="">انتخاب گیاه...</option>';
 
-  let count = 0;
-  for (const name in plantData) {
-    const p = plantData[name];
-    const matchG = grp === "all" || p.گروه === grp;
-    const matchS = txt === "" || name.includes(txt);
-    let matchL = true;
-    if (lgt !== "all") {
-      if (lgt === "low" && !p.نور.includes("کم") && !p.نور.includes("سایه"))
-        matchL = false;
-      if (lgt === "medium" && !p.نور.includes("متوسط")) matchL = false;
-      if (lgt === "high" && !p.نور.includes("زیاد")) matchL = false;
-    }
-
-    if (matchG && matchS && matchL) {
-      selector.innerHTML += `<option value="${name}">${name}</option>`;
-      count++;
-    }
-  }
-
-  if (count === 0) selector.innerHTML = "<option>یافت نشد</option>";
-  else if (count === 1 && txt !== "") {
-    selector.selectedIndex = 1;
-    displayPlantInfo();
-  }
+  filteredPlants.forEach((plant) => {
+    selector.innerHTML += `<option value="${plant.name}">${plant.name}</option>`;
+  });
 }
 
+// ✅ نمایش اطلاعات گیاه از selector - و نمایش لیست
 export function displayPlantInfo() {
-  const name = document.getElementById("plant-selector").value;
-  if (!name || !plantData[name]) return;
-  document.getElementById("results").innerHTML = PlantCard(
-    name,
-    plantData[name]
-  );
+  const selector = document.getElementById("plant-selector");
+  const plantName = selector?.value;
+
+  if (plantName) {
+    const plant = plantData.find((p) => p.name === plantName);
+    if (plant) {
+      currentPlant = plant;
+      const resultsDiv = document.getElementById("results");
+      if (resultsDiv) {
+        resultsDiv.innerHTML = PlantCard(plant.name, plant);
+        resultsDiv.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  } else {
+    // اگر انتخابی نشود، دوباره لیست نمایش بده
+    displayPlants(filteredPlants);
+  }
 }
 
+// نمایش لیست گیاهان
+function displayPlants(plants) {
+  const resultsDiv = document.getElementById("results");
+
+  if (!resultsDiv) return;
+
+  if (plants.length === 0) {
+    resultsDiv.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-search"></i>
+        <p>گیاهی یافت نشد</p>
+      </div>
+    `;
+    return;
+  }
+
+  // ✅ نمایش grid نتایج
+  const html = `
+    <div class="encyclopedia-grid">
+      ${plants
+        .map(
+          (plant) => `
+        <div class="plant-preview-card" onclick="app.showPlantDetail('${
+          plant.name
+        }')">
+          ${
+            plant.image
+              ? `<img src="${plant.image}" alt="${plant.name}" class="plant-preview-image">`
+              : '<div class="plant-preview-placeholder"><i class="fas fa-leaf"></i></div>'
+          }
+          <div class="plant-preview-info">
+            <h3>${plant.name}</h3>
+            <p class="badge">${plant.گروه || "عمومی"}</p>
+            <p class="quick-info">
+              💧 ${plant.آبیاری?.substring(0, 20) || "اطلاعات ندارد"}...
+            </p>
+          </div>
+        </div>
+      `
+        )
+        .join("")}
+    </div>
+  `;
+
+  resultsDiv.innerHTML = html;
+}
+
+// ✅ نمایش جزئیات کامل
+export async function showPlantDetail(plantName) {
+  const plant = plantData.find((p) => p.name === plantName);
+  if (plant) {
+    currentPlant = plant;
+    const resultsDiv = document.getElementById("results");
+    if (resultsDiv) {
+      resultsDiv.innerHTML = PlantCard(plant.name, plant);
+      resultsDiv.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+}
+
+// ✅ حذف جستجو
 export function clearSearch() {
   document.getElementById("search-input").value = "";
-  filter();
+  document.getElementById("group-filter").value = "";
+  document.getElementById("light-filter").value = "";
+  document.getElementById("plant-selector").value = "";
+
+  filteredPlants = plantData;
+  populatePlantSelector();
+  displayPlants(plantData);
+
+  console.log("🔄 جستجو پاک شد");
 }
