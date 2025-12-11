@@ -95,18 +95,6 @@ export function filter() {
   console.log(`🔍 ${filteredPlants.length} گیاه پیدا شد`);
 }
 
-// ✅ پرکردن selector جدید
-function populatePlantSelector() {
-  const selector = document.getElementById("plant-selector");
-  if (!selector) return;
-
-  selector.innerHTML = '<option value="">انتخاب گیاه...</option>';
-
-  filteredPlants.forEach((plant) => {
-    selector.innerHTML += `<option value="${plant.name}">${plant.name}</option>`;
-  });
-}
-
 // ✅ نمایش اطلاعات گیاه از selector - و نمایش لیست
 export function displayPlantInfo() {
   const selector = document.getElementById("plant-selector");
@@ -119,13 +107,28 @@ export function displayPlantInfo() {
       const resultsDiv = document.getElementById("results");
       if (resultsDiv) {
         resultsDiv.innerHTML = PlantCard(plant.name, plant);
-        resultsDiv.scrollIntoView({ behavior: "smooth" });
+        resultsDiv.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }
   } else {
     // اگر انتخابی نشود، دوباره لیست نمایش بده
     displayPlants(filteredPlants);
   }
+}
+
+// ✅ پرکردن selector جدید
+function populatePlantSelector() {
+  const selector = document.getElementById("plant-selector");
+  if (!selector) return;
+
+  selector.innerHTML = '<option value="">انتخاب گیاه...</option>';
+
+  filteredPlants.forEach((plant) => {
+    selector.innerHTML += `<option value="${plant.name}">${plant.name}</option>`;
+  });
+
+  // ✅ ریست کردن انتخاب (بسیار مهم!)
+  selector.value = "";
 }
 
 // نمایش لیست گیاهان
